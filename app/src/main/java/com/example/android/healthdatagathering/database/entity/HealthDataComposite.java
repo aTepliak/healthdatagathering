@@ -1,7 +1,8 @@
-package com.example.android.healthdatagathering.database;
+package com.example.android.healthdatagathering.database.entity;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import org.json.JSONObject;
@@ -10,14 +11,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Entity
+@Entity(indices = {@Index("id")})
 public class HealthDataComposite implements HealthData {
     @PrimaryKey(autoGenerate = true)
     private long id;
 
     private String name;
 
-    private List<HealthDataComponent> components;
+
 
     private Date startTime;
 
@@ -26,17 +27,17 @@ public class HealthDataComposite implements HealthData {
 
 
     @Ignore
-    public HealthDataComposite(String name, List<HealthDataComponent> components, Date startTime, Date endTime) {
+    public HealthDataComposite(String name, Date startTime, Date endTime) {
         this.name = name;
-        this.components = components;
+
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public HealthDataComposite(long id, String name, List<HealthDataComponent> components, Date startTime, Date endTime) {
+    public HealthDataComposite(long id, String name,  Date startTime, Date endTime) {
         this.id = id;
         this.name = name;
-        this.components = components;
+
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -50,14 +51,6 @@ public class HealthDataComposite implements HealthData {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<HealthDataComponent> getComponents() {
-        return components;
-    }
-
-    public void setComponents(List<HealthDataComponent> components) {
-        this.components = components;
     }
 
     public Date getStartTime() {
@@ -87,7 +80,13 @@ public class HealthDataComposite implements HealthData {
     }
 
     @Override
-    public ArrayList getSeriesRepresentation() {
+    public ArrayList<String> getStringSeriesRepresentation() {
         return null;
     }
+
+    @Override
+    public ArrayList<Float> getFloatSeriesRepresentation() {
+        return null;
+    }
+
 }
