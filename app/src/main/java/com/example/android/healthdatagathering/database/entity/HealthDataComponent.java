@@ -28,9 +28,7 @@ public class HealthDataComponent   implements HealthData {
         return numericValue;
     }
 
-    public void setNumericValue(boolean numericValue) {
-        this.numericValue = numericValue;
-    }
+
 
     private boolean numericValue;
 
@@ -42,37 +40,9 @@ public class HealthDataComponent   implements HealthData {
 
     private ArrayList<String>stringValues;
 
-    public Float getFloatValue() {
-        return floatValue;
-    }
+    private Date startTime;
 
-    public void setFloatValue(Float floatValue) {
-        this.floatValue = floatValue;
-    }
-
-    public ArrayList<Float> getFloatValues() {
-        return floatValues;
-    }
-
-    public void setFloatValues(ArrayList<Float> floatValues) {
-        this.floatValues = floatValues;
-    }
-
-    public String getStringValue() {
-        return stringValue;
-    }
-
-    public void setStringValue(String stringValue) {
-        this.stringValue = stringValue;
-    }
-
-    public ArrayList<String> getStringValues() {
-        return stringValues;
-    }
-
-    public void setStringValues(ArrayList<String> stringValues) {
-        this.stringValues = stringValues;
-    }
+    private Date endTime;
 
     //creating new entity
 
@@ -163,10 +133,41 @@ public class HealthDataComponent   implements HealthData {
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
+    public Float getFloatValue() {
+        return floatValue;
+    }
 
-    private Date startTime;
+    public void setFloatValue(Float floatValue) {
+        this.floatValue = floatValue;
+    }
 
-    private Date endTime;
+    public ArrayList<Float> getFloatValues() {
+        return floatValues;
+    }
+
+    public void setFloatValues(ArrayList<Float> floatValues) {
+        this.floatValues = floatValues;
+    }
+
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
+
+    public ArrayList<String> getStringValues() {
+        return stringValues;
+    }
+
+    public void setStringValues(ArrayList<String> stringValues) {
+        this.stringValues = stringValues;
+    }
+    public void setNumericValue(boolean numericValue) {
+        this.numericValue = numericValue;
+    }
+
 
 
     @Override
