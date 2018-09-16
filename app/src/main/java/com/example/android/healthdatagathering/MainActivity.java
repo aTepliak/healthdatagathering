@@ -15,7 +15,9 @@ import com.samsung.android.sdk.healthdata.HealthDataStore;
 import com.samsung.android.sdk.healthdata.HealthPermissionManager;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -151,11 +153,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPermission() {
-        HealthPermissionManager.PermissionKey permKey = new HealthPermissionManager.PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ);
+
         HealthPermissionManager pmsManager = new HealthPermissionManager(mStore);
         try {
             // Show user permission UI for allowing user to change options
-            pmsManager.requestPermissions(Collections.singleton(permKey), MainActivity.this)
+            pmsManager.requestPermissions(generatePermissionKeySet(), MainActivity.this)
                     .setResultListener(result -> {
                         Log.d(APP_TAG, "Permission callback is received.");
                         Map<HealthPermissionManager.PermissionKey, Boolean> resultMap = result.getResultMap();
@@ -172,6 +174,25 @@ public class MainActivity extends AppCompatActivity {
             Log.e(APP_TAG, "Permission setting fails.", e);
         }
     }
+
+
+
+    private Set<HealthPermissionManager.PermissionKey> generatePermissionKeySet() {
+        Set<HealthPermissionManager.PermissionKey> pmsKeySet = new HashSet<>();
+
+        // Add the read and write permissions to Permission KeySet
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.FoodIntake.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.BloodGlucose.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.BloodPressure.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.FloorsClimbed.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.Sleep.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.SleepStage.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.HeartRate.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+
+        return pmsKeySet;
+    }
+
 
     private SamsungSHealthCollector.StepCountObserver mStepCountObserver = count -> {
         Log.d(APP_TAG, "Step reported : " + count);
