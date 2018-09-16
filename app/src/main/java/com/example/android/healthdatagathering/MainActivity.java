@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.healthdatagathering.samsugshealth.SamsungSHealthCollector;
@@ -21,13 +24,16 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String APP_TAG = "SimpleHealth";
 
-    @BindView(R.id.editHealthDateValue1)
-    TextView mStepCountTv;
+    @BindView(R.id.editHealthDateValue1) TextView mStepCountTv;
+    @BindView(R.id.getsSteps) TextView stepsButton;
+
+
 
     private HealthDataStore mStore;
     private SamsungSHealthCollector mReporter;
@@ -37,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+
+
+
+
+
+
 
         HealthDataService healthDataService = new HealthDataService();
         try {
@@ -64,7 +77,10 @@ public class MainActivity extends AppCompatActivity {
             Log.d(APP_TAG, "Health data service is connected.");
             mReporter = new SamsungSHealthCollector(mStore);
             if (isPermissionAcquired()) {
-                mReporter.start(mStepCountObserver);
+                mReporter.start();
+                updateStepCountView(String.valueOf(mReporter.getTodaySteps()));
+                Log.d(APP_TAG, "_______________________"+ String.valueOf(mReporter.getTodaySteps()));
+
             } else {
                 requestPermission();
             }
@@ -167,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                             showPermissionAlarmDialog();
                         } else {
                             // Get the current step count and display it
-                            mReporter.start(mStepCountObserver);
+                            mReporter.start();
                         }
                     });
         } catch (Exception e) {
@@ -176,16 +192,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private Set<HealthPermissionManager.PermissionKey> generatePermissionKeySet() {
         Set<HealthPermissionManager.PermissionKey> pmsKeySet = new HashSet<>();
 
         // Add the read and write permissions to Permission KeySet
-        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.FoodIntake.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.BloodGlucose.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.BloodPressure.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
-        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.FloorsClimbed.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        //pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.FloorsClimbed.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.Sleep.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.SleepStage.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.HeartRate.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
@@ -194,14 +208,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private SamsungSHealthCollector.StepCountObserver mStepCountObserver = count -> {
-        Log.d(APP_TAG, "Step reported : " + count);
-        updateStepCountView(String.valueOf(count));
-    };
-
     private void updateStepCountView(final String count) {
         runOnUiThread(() -> mStepCountTv.setText(count));
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -219,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
+
 
 
 }

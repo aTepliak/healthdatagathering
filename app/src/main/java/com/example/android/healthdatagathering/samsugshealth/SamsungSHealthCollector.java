@@ -4,7 +4,6 @@ package com.example.android.healthdatagathering.samsugshealth;
 
 import com.samsung.android.sdk.healthdata.HealthConstants;
 import com.samsung.android.sdk.healthdata.HealthData;
-import com.samsung.android.sdk.healthdata.HealthDataObserver;
 import com.samsung.android.sdk.healthdata.HealthDataResolver;
 import com.samsung.android.sdk.healthdata.HealthDataResolver.ReadRequest;
 import com.samsung.android.sdk.healthdata.HealthDataResolver.ReadResult;
@@ -18,22 +17,28 @@ import java.util.TimeZone;
 
 public class SamsungSHealthCollector {
     private final HealthDataStore mStore;
-    private StepCountObserver mStepCountObserver;
     private static final long ONE_DAY_IN_MILLIS = 24 * 60 * 60 * 1000L;
-
+    private int todaySteps;
     public SamsungSHealthCollector(HealthDataStore store) {
         mStore = store;
     }
 
-    public void start(StepCountObserver listener) {
-        mStepCountObserver = listener;
-        // Register an observer to listen changes of step count and get today step count
-        HealthDataObserver.addObserver(mStore, HealthConstants.StepCount.HEALTH_DATA_TYPE, mObserver);
+    public void start() {
+
+
         readTodayStepCount();
     }
 
     // Read the today's step count on demand
     private void readTodayStepCount() {
+
+        readTodayData(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthConstants.StepCount.COUNT, HealthConstants.StepCount.START_TIME,HealthConstants.StepCount.TIME_OFFSET);
+        readTodayData(HealthConstants.BloodGlucose.HEALTH_DATA_TYPE, HealthConstants.BloodGlucose.GLUCOSE, HealthConstants.BloodGlucose.START_TIME,HealthConstants.BloodGlucose.TIME_OFFSET);
+        Log.i("LOOOOOOOOOOOOOOOOK", mListener.toString());
+    }
+
+    // Read the today's step count on demand
+    private void readTodayData(String healthDataType, String data,  String start, String offset) {
         HealthDataResolver resolver = new HealthDataResolver(mStore, null);
 
         // Set time range from start time of today to the current time
@@ -41,9 +46,9 @@ public class SamsungSHealthCollector {
         long endTime = startTime + ONE_DAY_IN_MILLIS;
 
         HealthDataResolver.ReadRequest request = new ReadRequest.Builder()
-                .setDataType(HealthConstants.StepCount.HEALTH_DATA_TYPE)
-                .setProperties(new String[] {HealthConstants.StepCount.COUNT})
-                .setLocalTimeRange(HealthConstants.StepCount.START_TIME, HealthConstants.StepCount.TIME_OFFSET,
+                .setDataType(healthDataType)
+                .setProperties(new String[] {data})
+                .setLocalTimeRange(start, offset,
                         startTime, endTime)
                 .build();
 
@@ -53,6 +58,9 @@ public class SamsungSHealthCollector {
 
         }
     }
+
+
+
 
     private long getStartTimeOfToday() {
         Calendar today = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -65,33 +73,26 @@ public class SamsungSHealthCollector {
         return today.getTimeInMillis();
     }
 
+    public int getTodaySteps() {
+        return todaySteps;
+    }
+
     private final HealthResultHolder.ResultListener<ReadResult> mListener = result -> {
         int count = 0;
 
         try {
             for (HealthData data : result) {
                 count += data.getInt(HealthConstants.StepCount.COUNT);
+
             }
+            todaySteps=count;
         } finally {
+
             result.close();
         }
 
-        if (mStepCountObserver != null) {
-            mStepCountObserver.onChanged(count);
-        }
+
     };
 
-    private final HealthDataObserver mObserver = new HealthDataObserver(null) {
 
-        // Update the step count when a change event is received
-        @Override
-        public void onChange(String dataTypeName) {
-            //Log.d(MainActivity.APP_TAG, "Observer receives a data changed event");
-            readTodayStepCount();
-        }
-    };
-
-    public interface StepCountObserver {
-        void onChanged(int count);
-    }
 }
