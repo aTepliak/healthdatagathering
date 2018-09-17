@@ -1,39 +1,34 @@
+
 package com.example.android.healthdatagathering;
-
-import android.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-
 import com.example.android.healthdatagathering.samsugshealth.SamsungSHealthCollector;
 import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
 import com.samsung.android.sdk.healthdata.HealthConstants;
 import com.samsung.android.sdk.healthdata.HealthDataService;
 import com.samsung.android.sdk.healthdata.HealthDataStore;
 import com.samsung.android.sdk.healthdata.HealthPermissionManager;
+import com.samsung.android.sdk.healthdata.HealthPermissionManager.PermissionKey;
+import com.samsung.android.sdk.healthdata.HealthPermissionManager.PermissionType;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.widget.TextView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     public static final String APP_TAG = "SimpleHealth";
 
     @BindView(R.id.editHealthDateValue1) TextView mStepCountTv;
-    @BindView(R.id.getsSteps) TextView stepsButton;
-
-
 
     private HealthDataStore mStore;
     private SamsungSHealthCollector mReporter;
@@ -43,13 +38,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-
-
-
-
-
-
 
         HealthDataService healthDataService = new HealthDataService();
         try {
@@ -77,10 +65,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(APP_TAG, "Health data service is connected.");
             mReporter = new SamsungSHealthCollector(mStore);
             if (isPermissionAcquired()) {
-                mReporter.start();
-                updateStepCountView(String.valueOf(mReporter.getTodaySteps()));
-                Log.d(APP_TAG, "_______________________"+ String.valueOf(mReporter.getTodaySteps()));
-
+                mReporter.start(mStepCountObserver);
             } else {
                 requestPermission();
             }
@@ -156,11 +141,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isPermissionAcquired() {
-        HealthPermissionManager.PermissionKey permKey = new HealthPermissionManager.PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ);
+        PermissionKey permKey = new PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, PermissionType.READ);
         HealthPermissionManager pmsManager = new HealthPermissionManager(mStore);
         try {
             // Check whether the permissions that this application needs are acquired
-            Map<HealthPermissionManager.PermissionKey, Boolean> resultMap = pmsManager.isPermissionAcquired(Collections.singleton(permKey));
+            Map<PermissionKey, Boolean> resultMap = pmsManager.isPermissionAcquired(Collections.singleton(permKey));
             return resultMap.get(permKey);
         } catch (Exception e) {
             Log.e(APP_TAG, "Permission request fails.", e);
@@ -169,21 +154,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPermission() {
-
+        PermissionKey permKey = new PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, PermissionType.READ);
         HealthPermissionManager pmsManager = new HealthPermissionManager(mStore);
         try {
             // Show user permission UI for allowing user to change options
-            pmsManager.requestPermissions(generatePermissionKeySet(), MainActivity.this)
+            pmsManager.requestPermissions(Collections.singleton(permKey), MainActivity.this)
                     .setResultListener(result -> {
                         Log.d(APP_TAG, "Permission callback is received.");
-                        Map<HealthPermissionManager.PermissionKey, Boolean> resultMap = result.getResultMap();
+                        Map<PermissionKey, Boolean> resultMap = result.getResultMap();
 
                         if (resultMap.containsValue(Boolean.FALSE)) {
                             updateStepCountView("");
                             showPermissionAlarmDialog();
                         } else {
                             // Get the current step count and display it
-                            mReporter.start();
+                            mReporter.start(mStepCountObserver);
                         }
                     });
         } catch (Exception e) {
@@ -193,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Set<HealthPermissionManager.PermissionKey> generatePermissionKeySet() {
-        Set<HealthPermissionManager.PermissionKey> pmsKeySet = new HashSet<>();
+        Set<PermissionKey> pmsKeySet = new HashSet<>();
 
         // Add the read and write permissions to Permission KeySet
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
@@ -208,11 +193,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+    private SamsungSHealthCollector.StepCountObserver mStepCountObserver = count -> {
+        Log.d(APP_TAG, "Step reported : " + count);
+        updateStepCountView(String.valueOf(count));
+    };
+
     private void updateStepCountView(final String count) {
         runOnUiThread(() -> mStepCountTv.setText(count));
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -230,8 +219,6 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
-
-
 
 
 }

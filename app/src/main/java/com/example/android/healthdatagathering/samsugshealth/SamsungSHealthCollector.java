@@ -1,9 +1,9 @@
 package com.example.android.healthdatagathering.samsugshealth;
 
-
-
+import com.example.android.healthdatagathering.MainActivity;
 import com.samsung.android.sdk.healthdata.HealthConstants;
 import com.samsung.android.sdk.healthdata.HealthData;
+import com.samsung.android.sdk.healthdata.HealthDataObserver;
 import com.samsung.android.sdk.healthdata.HealthDataResolver;
 import com.samsung.android.sdk.healthdata.HealthDataResolver.ReadRequest;
 import com.samsung.android.sdk.healthdata.HealthDataResolver.ReadResult;
@@ -17,10 +17,18 @@ import java.util.TimeZone;
 
 public class SamsungSHealthCollector {
     private final HealthDataStore mStore;
+    private StepCountObserver mStepCountObserver;
     private static final long ONE_DAY_IN_MILLIS = 24 * 60 * 60 * 1000L;
-    private int todaySteps;
+
     public SamsungSHealthCollector(HealthDataStore store) {
         mStore = store;
+    }
+
+    public void start(StepCountObserver listener) {
+        mStepCountObserver = listener;
+        // Register an observer to listen changes of step count and get today step count
+        HealthDataObserver.addObserver(mStore, HealthConstants.StepCount.HEALTH_DATA_TYPE, mObserver);
+        readTodayStepCount();
     }
 
     public void start() {
@@ -34,7 +42,9 @@ public class SamsungSHealthCollector {
 
         readTodayData(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthConstants.StepCount.COUNT, HealthConstants.StepCount.START_TIME,HealthConstants.StepCount.TIME_OFFSET);
         readTodayData(HealthConstants.BloodGlucose.HEALTH_DATA_TYPE, HealthConstants.BloodGlucose.GLUCOSE, HealthConstants.BloodGlucose.START_TIME,HealthConstants.BloodGlucose.TIME_OFFSET);
-        Log.i("LOOOOOOOOOOOOOOOOK", mListener.toString());
+        readTodayData(HealthConstants.HeartRate.HEALTH_DATA_TYPE, HealthConstants.HeartRate.HEART_RATE, HealthConstants.HeartRate.START_TIME,HealthConstants.HeartRate.TIME_OFFSET);
+        readTodayData(HealthConstants.Sleep.HEALTH_DATA_TYPE,  HealthConstants.Sleep.END_TIME, HealthConstants.HeartRate.START_TIME,HealthConstants.HeartRate.TIME_OFFSET);
+
     }
 
     // Read the today's step count on demand
@@ -52,15 +62,14 @@ public class SamsungSHealthCollector {
                         startTime, endTime)
                 .build();
 
+        Log.i("BUILDING COUNT", resolver.read(request).toString());
+
         try {
             resolver.read(request).setResultListener(mListener);
         } catch (Exception e) {
 
         }
     }
-
-
-
 
     private long getStartTimeOfToday() {
         Calendar today = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
@@ -73,26 +82,45 @@ public class SamsungSHealthCollector {
         return today.getTimeInMillis();
     }
 
-    public int getTodaySteps() {
-        return todaySteps;
-    }
+
+
 
     private final HealthResultHolder.ResultListener<ReadResult> mListener = result -> {
         int count = 0;
 
+
         try {
             for (HealthData data : result) {
+                float glucoseValue = data.getFloat(HealthConstants.BloodGlucose.GLUCOSE);
+                float heartRate = data.getFloat(HealthConstants.HeartRate.HEART_RATE);
+                float sleepEnd = data.getFloat(HealthConstants.Sleep.END_TIME);
+                Log.i("Glukose; heartrate; sleepEnd", glucoseValue + "; " + heartRate + ";" + sleepEnd);
                 count += data.getInt(HealthConstants.StepCount.COUNT);
-
             }
-            todaySteps=count;
         } finally {
-
             result.close();
         }
 
-
+        if (mStepCountObserver != null) {
+            mStepCountObserver.onChanged(count);
+        }
     };
 
+    private final HealthDataObserver mObserver = new HealthDataObserver(null) {
 
+        // Update the step count when a change event is received
+        @Override
+        public void onChange(String dataTypeName) {
+            Log.d(MainActivity.APP_TAG, "Observer receives a data changed event");
+            readTodayStepCount();
+        }
+    };
+
+    public interface StepCountObserver {
+        void onChanged(int count);
+    }
 }
+
+
+
+
