@@ -27,11 +27,7 @@
             android:text="@string/desc" />
 
     </LinearLayout>
-    <Button
-        android:id="@+id/getsSteps"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Button" />
+
 
     <LinearLayout
         android:orientation="vertical"
@@ -72,6 +68,107 @@
                 android:text="@string/unit1" />
         </LinearLayout>
 
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="20sp"
+                android:text="@string/title2" />
+
+            <TextView
+                android:id="@+id/editHealthDateValue2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#C0C0C0"
+                android:gravity="center_horizontal"
+                android:textSize="15sp"
+                android:text="@string/unit2" />
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="20sp"
+                android:text="@string/title3" />
+
+            <TextView
+                android:id="@+id/editHealthDateValue3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#C0C0C0"
+                android:gravity="center_horizontal"
+                android:textSize="15sp"
+                android:text="@string/unit3" />
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="true" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="20sp"
+                android:text="@string/title4" />
+
+            <TextView
+                android:id="@+id/editHealthDateValue4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#C0C0C0"
+                android:gravity="center_horizontal"
+                android:textSize="15sp"
+                android:text="@string/unit4" />
+        </LinearLayout>
+
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -84,7 +181,14 @@
                 android:layout_height="1dp"
                 android:background="#4A7EBB" />
         </LinearLayout>
-
+        <Button
+            android:id="@+id/getData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
     </LinearLayout>
+
+
+
 
 </LinearLayout>

@@ -1,8 +1,14 @@
 <resources>
     <string name="app_name">HealthDataGathering</string>
-    <string name="desc">Step Count</string>
-    <string name="title1">Today</string>
+    <string name="desc">Health Data Collection</string>
+    <string name="title1">Today\'s Steps</string>
+    <string name="title2">Today\'s  Blood Sugar</string>
+    <string name="title3">Today\'s Heart Rate</string>
+    <string name="title4">Today\'s Sleep Time</string>
     <string name="unit1">Steps</string>
+    <string name="unit2">Mg/dL</string>
+    <string name="unit3">Beats per Minute</string>
+    <string name="unit4"> </string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>

@@ -11,13 +11,16 @@ import com.samsung.android.sdk.healthdata.HealthPermissionManager.PermissionType
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,15 +30,20 @@ import java.util.Set;
 public class MainActivity extends Activity {
 
     public static final String APP_TAG = "SimpleHealth";
-
+    private static Context sContext;
     @BindView(R.id.editHealthDateValue1) TextView mStepCountTv;
-
+    @BindView(R.id.editHealthDateValue2) TextView mBloodSugar;
+    @BindView(R.id.editHealthDateValue3) TextView mHeartRate;
+    @BindView(R.id.editHealthDateValue4) TextView mSleepTime;
+    @BindView(R.id.getData) Button getDataButton;
     private HealthDataStore mStore;
     private SamsungSHealthCollector mReporter;
-
+    private DataTransmittingJobService dataTrasmittingJobService = new DataTransmittingJobService();
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        sContext= getApplicationContext();
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -50,8 +58,21 @@ public class MainActivity extends Activity {
         mStore = new HealthDataStore(this, mConnectionListener);
         // Request the connection to the health data store
         mStore.connectService();
+
+        //starting the job schedular once a day
+        dataTrasmittingJobService.schedule(sContext, dataTrasmittingJobService.ONE_DAY_INTERVAL);
     }
 
+
+    @OnClick(R.id.getData)
+    public void setGetDataButton(Button button) {
+        runOnUiThread(() -> mHeartRate.setText(String.valueOf(mReporter.getHeartRate() )));
+        runOnUiThread(() -> mBloodSugar.setText(String.valueOf(mReporter.getGlucoseValue() )));
+        runOnUiThread(() -> mStepCountTv.setText(String.valueOf(mReporter.getSteps() )));
+        runOnUiThread(() -> mSleepTime.setText( mReporter.getSleepAsDateString()));
+
+
+    }
     @Override
     public void onDestroy() {
         mStore.disconnectService();
@@ -66,6 +87,7 @@ public class MainActivity extends Activity {
             mReporter = new SamsungSHealthCollector(mStore);
             if (isPermissionAcquired()) {
                 mReporter.start(mStepCountObserver);
+
             } else {
                 requestPermission();
             }
@@ -141,12 +163,12 @@ public class MainActivity extends Activity {
     }
 
     private boolean isPermissionAcquired() {
-        PermissionKey permKey = new PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, PermissionType.READ);
+
         HealthPermissionManager pmsManager = new HealthPermissionManager(mStore);
         try {
             // Check whether the permissions that this application needs are acquired
-            Map<PermissionKey, Boolean> resultMap = pmsManager.isPermissionAcquired(Collections.singleton(permKey));
-            return resultMap.get(permKey);
+            Map<PermissionKey, Boolean> resultMap = pmsManager.isPermissionAcquired(generatePermissionKeySet());
+            return  resultMap.entrySet().stream().allMatch(e -> e.getValue() == true);
         } catch (Exception e) {
             Log.e(APP_TAG, "Permission request fails.", e);
         }
@@ -194,9 +216,9 @@ public class MainActivity extends Activity {
 
 
 
-    private SamsungSHealthCollector.StepCountObserver mStepCountObserver = count -> {
-        Log.d(APP_TAG, "Step reported : " + count);
-        updateStepCountView(String.valueOf(count));
+    private SamsungSHealthCollector.StepCountObserver mStepCountObserver = steps -> {
+        Log.d(APP_TAG, "Step reported : " + steps);
+        updateStepCountView(String.valueOf(steps));
     };
 
     private void updateStepCountView(final String count) {

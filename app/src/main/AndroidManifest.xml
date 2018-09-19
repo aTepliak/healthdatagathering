@@ -26,6 +26,8 @@ com.samsung.health.uv_exposure;  com.samsung.health.blood_glucose; com.samsung.h
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".DataTrasmittlingJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>
