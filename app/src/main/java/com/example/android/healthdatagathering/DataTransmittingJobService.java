@@ -7,11 +7,15 @@ import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 
+import com.example.android.healthdatagathering.samsugshealth.SasmsungSHealthCollectorStarter;
+
 public class DataTransmittingJobService extends JobService {
 
     private static final int JOB_ID = 1;
-    public static final long ONE_DAY_INTERVAL = 24 * 60 * 60 * 1000L; // 1 Day
+    public static final long ONE_DAY_INTERVAL =  15* 60 * 1000; // 24 * 60 * 60 * 1000L; // 1 Day
     private  boolean allJobsFinished = false; // not going to be finished normally
+    private SasmsungSHealthCollectorStarter starter = new SasmsungSHealthCollectorStarter();
+
     public static void schedule(Context context, long intervalMillis) {
         JobScheduler jobScheduler = (JobScheduler)
                 context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
@@ -32,9 +36,10 @@ public class DataTransmittingJobService extends JobService {
     @Override
     public boolean onStartJob(final JobParameters params) {
         /* executing a task synchronously */
+        starter.start();
         if (allJobsFinished) {
             // To finish a periodic JobService,
-            // it mustbe cancelled it, so it will not be scheduled anymore.
+            // if must be cancelled  so it will not be scheduled anymore.
             DataTransmittingJobService.cancel(this);
         }
 

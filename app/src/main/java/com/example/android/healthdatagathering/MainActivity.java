@@ -1,5 +1,7 @@
 
 package com.example.android.healthdatagathering;
+import com.example.android.healthdatagathering.database.AppDatabase;
+import com.example.android.healthdatagathering.database.dao.HealthDataComponentDao;
 import com.example.android.healthdatagathering.samsugshealth.SamsungSHealthCollector;
 import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
 import com.samsung.android.sdk.healthdata.HealthConstants;
@@ -17,7 +19,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.Button;
 import android.widget.TextView;
+import com.anychart.AnyChart;
+import com.anychart.AnyChartView;
+import com.anychart.chart.common.dataentry.DataEntry;
+import com.anychart.charts.Pie;
+import com.anychart.chart.common.dataentry.ValueDataEntry;
 
+import java.util.ArrayList;
+import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,6 +38,10 @@ import java.util.Set;
 
 public class MainActivity extends Activity {
 
+
+
+
+
     public static final String APP_TAG = "SimpleHealth";
     private static Context sContext;
     @BindView(R.id.editHealthDateValue1) TextView mStepCountTv;
@@ -39,11 +52,17 @@ public class MainActivity extends Activity {
     private HealthDataStore mStore;
     private SamsungSHealthCollector mReporter;
     private DataTransmittingJobService dataTrasmittingJobService = new DataTransmittingJobService();
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+
+
         sContext= getApplicationContext();
         super.onCreate(savedInstanceState);
-
+        HealthDataComponentDao repo =   AppDatabase.getInstance(sContext ).healthDataComponentDao();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -61,6 +80,25 @@ public class MainActivity extends Activity {
 
         //starting the job schedular once a day
         dataTrasmittingJobService.schedule(sContext, dataTrasmittingJobService.ONE_DAY_INTERVAL);
+
+
+        Pie pie = AnyChart.pie();
+        Pie pie2 = AnyChart.pie();
+
+        List<DataEntry> data = new ArrayList<>();
+        data.add(new ValueDataEntry("John", 10000));
+        data.add(new ValueDataEntry("Jake", 12000));
+        data.add(new ValueDataEntry("Peter", 18000));
+
+        pie.data(data);
+        pie2.data(data);
+
+        AnyChartView anyChartView =   findViewById(R.id.any_chart_view);
+        anyChartView.setChart(pie);
+
+        AnyChartView anyChartView2 =   findViewById(R.id.any_chart_view2);
+        anyChartView2.setChart(pie2);
+
     }
 
 
