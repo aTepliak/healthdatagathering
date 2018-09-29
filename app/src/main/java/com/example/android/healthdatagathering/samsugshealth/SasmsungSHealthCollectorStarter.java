@@ -10,6 +10,7 @@ import com.example.android.healthdatagathering.MainActivity;
 import com.example.android.healthdatagathering.R;
 import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
 import com.samsung.android.sdk.healthdata.HealthConstants;
+import com.samsung.android.sdk.healthdata.HealthDataService;
 import com.samsung.android.sdk.healthdata.HealthDataStore;
 import com.samsung.android.sdk.healthdata.HealthPermissionManager;
 
@@ -25,28 +26,40 @@ public class SasmsungSHealthCollectorStarter  {
     private HealthDataStore mStore;
     private SamsungSHealthCollector mReporter;
     private DataTransmittingJobService dataTrasmittingJobService;
-     HealthDataStore.ConnectionListener mConnectionListener;
-    public void start()
+    private  HealthDataStore.ConnectionListener   mConnectionListener;
+
+     public void start()
 
     {
+
+        HealthDataService healthDataService = new HealthDataService();
+        try {
+            healthDataService.initialize(HealthDataGatheringApp.getAppContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Log.i(COLLECOR_TAG, "started");
 
         // Create a HealthDataStore instance and set its listener
        // getmConnectionListener();
         mStore = new HealthDataStore(HealthDataGatheringApp.getAppContext(), mConnectionListener);
         // Request the connection to the health data store
-        mStore.connectService();
+        mStore.connectService( 15*60*1000);
 
-        mConnectionListener = new HealthDataStore.ConnectionListener() {
-
+         mConnectionListener = new HealthDataStore.ConnectionListener() {
         @Override
         public void onConnected() {
-            Log.d(APP_TAG, "Health data service is connected.");
+            Log.d(APP_TAG, "Health data service is connected!!!!!!!!!!!!!!!!!!!!!.");
             mReporter = new SamsungSHealthCollector(mStore);
+
             if (isPermissionAcquired()) {
                // mReporter.start(mStepCountObserver);
-
+                 mReporter.start();
+                Log.i(COLLECOR_TAG, String.valueOf(mReporter.getGlucoseValue() ));
             }
+         else {
+                 requestPermission();
+             }
         }
 
         @Override
@@ -64,9 +77,10 @@ public class SasmsungSHealthCollectorStarter  {
 
           };
 
-        Log.i(COLLECOR_TAG, String.valueOf(mReporter.getSteps() ));
-    }
 
+       // mConnectionListener.onConnected();
+
+    }
 
 
 
@@ -85,6 +99,29 @@ public class SasmsungSHealthCollectorStarter  {
         }
 
 
+    private void requestPermission() {
+        HealthPermissionManager.PermissionKey permKey = new HealthPermissionManager.PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ);
+        HealthPermissionManager pmsManager = new HealthPermissionManager(mStore);
+        try {
+            // Show user permission UI for allowing user to change options
+            pmsManager.requestPermissions(Collections.singleton(permKey), new MainActivity())
+                    .setResultListener(result -> {
+                        Log.d(APP_TAG, "Permission callback is received.");
+                        Map<HealthPermissionManager.PermissionKey, Boolean> resultMap = result.getResultMap();
+
+                        if (resultMap.containsValue(Boolean.FALSE)) {
+                           Log.i(APP_TAG, "Permission needed");
+                        } else {
+                            // Get the current step count and display it
+                            mReporter.start();
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e(APP_TAG, "Permission setting fails.", e);
+        }
+    }
+
+
         private Set<HealthPermissionManager.PermissionKey> generatePermissionKeySet() {
             Set<HealthPermissionManager.PermissionKey> pmsKeySet = new HashSet<>();
 
@@ -99,7 +136,9 @@ public class SasmsungSHealthCollectorStarter  {
 
             return pmsKeySet;
         }
-    }
+
+
+}
 
 
 

@@ -1,5 +1,10 @@
 
 package com.example.android.healthdatagathering;
+import com.anychart.APIlib;
+import com.example.android.healthdatagathering.charts.ColumnChart;
+
+
+import com.example.android.healthdatagathering.charts.PieChart;
 import com.example.android.healthdatagathering.database.AppDatabase;
 import com.example.android.healthdatagathering.database.dao.HealthDataComponentDao;
 import com.example.android.healthdatagathering.samsugshealth.SamsungSHealthCollector;
@@ -15,34 +20,33 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.Button;
 import android.widget.TextView;
-import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
-import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.charts.Pie;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.anychart.AnyChartView;
+
+import java.util.HashMap;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import java.util.Collections;
 import java.util.HashSet;
+
 import java.util.Map;
 import java.util.Set;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 
 
 
 
 
-    public static final String APP_TAG = "SimpleHealth";
+    public static final String APP_TAG = "HealthDataGathering";
     private static Context sContext;
     @BindView(R.id.editHealthDateValue1) TextView mStepCountTv;
     @BindView(R.id.editHealthDateValue2) TextView mBloodSugar;
@@ -51,15 +55,14 @@ public class MainActivity extends Activity {
     @BindView(R.id.getData) Button getDataButton;
     private HealthDataStore mStore;
     private SamsungSHealthCollector mReporter;
-    private DataTransmittingJobService dataTrasmittingJobService = new DataTransmittingJobService();
-
-
+    private DataTransmittingJobService dataTrasmittingJobService ;
+    private HealthDataGatheringApp app1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
 
-
+         // app1 = new  HealthDataGatheringApp();
         sContext= getApplicationContext();
         super.onCreate(savedInstanceState);
         HealthDataComponentDao repo =   AppDatabase.getInstance(sContext ).healthDataComponentDao();
@@ -68,13 +71,13 @@ public class MainActivity extends Activity {
 
         HealthDataService healthDataService = new HealthDataService();
         try {
-            healthDataService.initialize(this);
+            healthDataService.initialize(sContext);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        dataTrasmittingJobService = new DataTransmittingJobService();
         // Create a HealthDataStore instance and set its listener
-        mStore = new HealthDataStore(this, mConnectionListener);
+        mStore = new HealthDataStore(sContext, mConnectionListener);
         // Request the connection to the health data store
         mStore.connectService();
 
@@ -82,22 +85,26 @@ public class MainActivity extends Activity {
         dataTrasmittingJobService.schedule(sContext, dataTrasmittingJobService.ONE_DAY_INTERVAL);
 
 
-        Pie pie = AnyChart.pie();
-        Pie pie2 = AnyChart.pie();
 
-        List<DataEntry> data = new ArrayList<>();
-        data.add(new ValueDataEntry("John", 10000));
-        data.add(new ValueDataEntry("Jake", 12000));
-        data.add(new ValueDataEntry("Peter", 18000));
+        AnyChartView anyChartView = findViewById(R.id.any_chart_view);
+        anyChartView.setProgressBar(findViewById(R.id.progress_bar));
+        APIlib.getInstance().setActiveAnyChartView(anyChartView);
 
-        pie.data(data);
-        pie2.data(data);
+        HashMap<String, Integer> data = new HashMap<>();
+        data.put("John", 10000);
+        data.put("Jake", 12000);
+        data.put("Peter", 18000);
 
-        AnyChartView anyChartView =   findViewById(R.id.any_chart_view);
-        anyChartView.setChart(pie);
 
-        AnyChartView anyChartView2 =   findViewById(R.id.any_chart_view2);
-        anyChartView2.setChart(pie2);
+        ColumnChart cartesian = new ColumnChart(data,"General","x","y" );
+
+        anyChartView.setChart(cartesian.getCartesian());
+
+       /* AnyChartView anyChartView1 = findViewById(R.id.any_chart_view1);
+        APIlib.getInstance().setActiveAnyChartView(anyChartView1);
+        PieChart pie = new PieChart(data );
+        anyChartView1.setChart(pie.getPieChart());*/
+
 
     }
 
@@ -163,7 +170,7 @@ public class MainActivity extends Activity {
             return;
         }
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(sContext);
 
         if (error.hasResolution()) {
             switch (error.getErrorCode()) {
@@ -214,11 +221,11 @@ public class MainActivity extends Activity {
     }
 
     private void requestPermission() {
-        PermissionKey permKey = new PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, PermissionType.READ);
+
         HealthPermissionManager pmsManager = new HealthPermissionManager(mStore);
         try {
             // Show user permission UI for allowing user to change options
-            pmsManager.requestPermissions(Collections.singleton(permKey), MainActivity.this)
+            pmsManager.requestPermissions(generatePermissionKeySet(),MainActivity.this)
                     .setResultListener(result -> {
                         Log.d(APP_TAG, "Permission callback is received.");
                         Map<PermissionKey, Boolean> resultMap = result.getResultMap();
