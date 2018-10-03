@@ -8,8 +8,7 @@ public interface HealthData    {
 
     String getStringRepresentation();
     JSONObject getJSONRepresentation();
-    ArrayList<String> getStringSeriesRepresentation();
-    ArrayList<Float> getFloatSeriesRepresentation();
+
 
 
 }

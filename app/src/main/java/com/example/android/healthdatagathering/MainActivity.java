@@ -4,9 +4,11 @@ import com.anychart.APIlib;
 import com.example.android.healthdatagathering.charts.ColumnChart;
 
 
+import com.example.android.healthdatagathering.charts.LineChart;
 import com.example.android.healthdatagathering.charts.PieChart;
 import com.example.android.healthdatagathering.database.AppDatabase;
-import com.example.android.healthdatagathering.database.dao.HealthDataComponentDao;
+import com.example.android.healthdatagathering.database.dao.HealthDataAtomicDao;
+import com.example.android.healthdatagathering.database.entity.HealthDataAtomic;
 import com.example.android.healthdatagathering.samsugshealth.SamsungSHealthCollector;
 import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
 import com.samsung.android.sdk.healthdata.HealthConstants;
@@ -65,7 +67,7 @@ public class MainActivity extends Activity{
          // app1 = new  HealthDataGatheringApp();
         sContext= getApplicationContext();
         super.onCreate(savedInstanceState);
-        HealthDataComponentDao repo =   AppDatabase.getInstance(sContext ).healthDataComponentDao();
+        HealthDataAtomicDao repo =   AppDatabase.getInstance(sContext ).healthDataAtomicDao();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -91,19 +93,39 @@ public class MainActivity extends Activity{
         APIlib.getInstance().setActiveAnyChartView(anyChartView);
 
         HashMap<String, Integer> data = new HashMap<>();
-        data.put("John", 10000);
-        data.put("Jake", 12000);
-        data.put("Peter", 18000);
+        data.put("02-10", 103);
+        data.put("03-10", 99);
+        data.put("04-10", 112);
 
 
-        ColumnChart cartesian = new ColumnChart(data,"General","x","y" );
+        ColumnChart cartesian = new ColumnChart(data,"Blood Sugar values for last 3 days","","" , "Mg/dL");
 
         anyChartView.setChart(cartesian.getCartesian());
 
-       /* AnyChartView anyChartView1 = findViewById(R.id.any_chart_view1);
+        AnyChartView anyChartView2 = findViewById(R.id.any_chart_view2);
+        APIlib.getInstance().setActiveAnyChartView(anyChartView2);
+        HashMap<String, Integer> sleepData = new HashMap<>();
+        sleepData.put("deep", 64);
+        sleepData.put("light",321 );
+        sleepData.put("REM", 57);
+
+        PieChart pie = new PieChart(sleepData );
+        anyChartView2.setChart(pie.getPieChart());
+
+
+
+
+        AnyChartView anyChartView1 = findViewById(R.id.any_chart_view1);
         APIlib.getInstance().setActiveAnyChartView(anyChartView1);
-        PieChart pie = new PieChart(data );
-        anyChartView1.setChart(pie.getPieChart());*/
+        HashMap<String, Integer[]> data1 = new HashMap<String, Integer[]>();
+        data1.put("02-10", new Integer[] {52, 62, 98});
+        data1.put("03-10",new Integer[] {54, 60, 112} );
+        data1.put("04-10", new Integer[] {49, 64, 100} );
+
+        LineChart line = new LineChart(data1, "heart bit", "BpM","min","average","max"  );
+        anyChartView1.setChart(line.getCartesian());
+
+
 
 
     }

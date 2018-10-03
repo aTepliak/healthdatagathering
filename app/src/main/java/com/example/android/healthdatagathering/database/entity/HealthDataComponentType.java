@@ -9,41 +9,28 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-@Entity(indices = {@Index("id")})
-public class HealthDataComposite implements HealthData {
-    @PrimaryKey(autoGenerate = true)
-    private long id;
+
+public abstract class HealthDataComponentType implements HealthData {
+
+
 
     private String name;
 
+    public boolean isNumericValue() {
+        return numericValue;
+    }
 
-
+    private boolean numericValue;
     private Date startTime;
-
     private Date endTime;
 
-
-
-    @Ignore
-    public HealthDataComposite(String name, Date startTime, Date endTime) {
-        this.name = name;
-
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
-    public HealthDataComposite(long id, String name,  Date startTime, Date endTime) {
-        this.id = id;
+    public HealthDataComponentType(String name, Date startTime, Date endTime) {
         this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public long getId(){
-        return id;
-    }
     public String getName() {
         return name;
     }
@@ -68,15 +55,16 @@ public class HealthDataComposite implements HealthData {
         this.endTime = endTime;
     }
 
-    @Override
-    public String getStringRepresentation() {
-        return null;
+    public void setNumericValue(boolean numericValue) {
+        this.numericValue = numericValue;
     }
 
     @Override
-    public JSONObject getJSONRepresentation() {
-        return null;
-    }
+    abstract public String getStringRepresentation();
+
+    @Override
+    abstract public JSONObject getJSONRepresentation();
+
 
 
 }

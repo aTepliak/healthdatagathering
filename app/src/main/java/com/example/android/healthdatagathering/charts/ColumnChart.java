@@ -24,7 +24,7 @@ public class ColumnChart {
    private Column column;
 
 
-    public ColumnChart(HashMap<String, Integer> inputData, String generalTitle, String xAxisTitle, String yAxisTitle) {
+    public ColumnChart(HashMap<String, Integer> inputData, String generalTitle, String xAxisTitle, String yAxisTitle, String unit) {
         cartesian = AnyChart.column();
         inputData.forEach((k,v)->this.data.add(new ValueDataEntry(k,v)));
          column = cartesian.column(data);
@@ -35,13 +35,13 @@ public class ColumnChart {
                 .anchor(Anchor.CENTER_BOTTOM)
                 .offsetX(0d)
                 .offsetY(5d)
-                .format("${%Value}{groupsSeparator: }");
+                .format( unit + "{%Value}{groupsSeparator: }");
         cartesian.animation(true);
         cartesian.title(generalTitle);
 
         cartesian.yScale().minimum(0d);
 
-        cartesian.yAxis(0).labels().format("${%Value}{groupsSeparator: }");
+        cartesian.yAxis(0).labels().format(unit+"{%Value}{groupsSeparator: }");
 
         cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
         cartesian.interactivity().hoverMode(HoverMode.BY_X);

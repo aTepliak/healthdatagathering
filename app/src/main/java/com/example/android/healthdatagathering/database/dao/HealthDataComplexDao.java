@@ -8,31 +8,26 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import com.example.android.healthdatagathering.database.entity.HealthData;
-import com.example.android.healthdatagathering.database.entity.HealthDataComponent;
+import com.example.android.healthdatagathering.database.entity.HealthDataComplex;
 import com.example.android.healthdatagathering.database.entity.HealthDataComposite;
 
 import java.util.List;
 @Dao
-public interface HealthDataComponentDao {
+public interface HealthDataComplexDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(HealthDataComponent component);
+    void insert(HealthDataComplex component);
 
-
-
-
-
-    //void insertComposite(HealthDataComposite composite);
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    void updateComponent (HealthDataComponent component);
+    void update (HealthDataComplex component);
 
 
     @Delete
-    void deleteComponent (HealthDataComponent component);
+    void deleteComponent (HealthDataComplex component);
 
 
-    @Query("SELECT * FROM healthdatacomponent ORDER BY id")
-    List<HealthDataComponent> loadAllComponents();
+    @Query("SELECT * FROM healthdatacomplex ORDER BY id")
+    List<HealthDataComplex> loadAllComplex();
 
 
 }

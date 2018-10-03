@@ -7,7 +7,6 @@ import android.arch.persistence.room.Query;
 
 import com.example.android.healthdatagathering.database.entity.CompositeComponentJoin;
 import com.example.android.healthdatagathering.database.entity.CompositeCompositeJoin;
-import com.example.android.healthdatagathering.database.entity.HealthDataComponent;
 import com.example.android.healthdatagathering.database.entity.HealthDataComposite;
 
 import java.util.List;

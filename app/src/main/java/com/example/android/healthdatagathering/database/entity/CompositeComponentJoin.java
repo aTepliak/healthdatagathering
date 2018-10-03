@@ -8,7 +8,7 @@ import android.arch.persistence.room.Index;
 @Entity(tableName = "composite_component_join",
         primaryKeys = { "compositeId", "componentId" },
         foreignKeys = {
-                @ForeignKey(entity = HealthDataComponent.class,
+                @ForeignKey(entity = HealthDataComplex.class,
                         parentColumns = "id",
                         childColumns = "componentId"),
                 @ForeignKey(entity = HealthDataComposite.class,
