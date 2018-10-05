@@ -17,7 +17,7 @@
         <meta-data
             android:name="com.samsung.android.health.permission.read"
             android:value="com.samsung.health.step_count;com.samsung.shealth.step_daily_trend; com.samsung.health.heart_rate; com.samsung.health.oxygen_saturation;
-com.samsung.health.uv_exposure;  com.samsung.health.blood_glucose; com.samsung.health.blood_pressure; com.samsung.health.body_temperature; com.samsung.health.sleep; com.samsung.health.sleep_stage" />
+com.samsung.health.uv_exposure; com.samsung.health.floors_climbed;  com.samsung.health.blood_glucose; com.samsung.health.blood_pressure; com.samsung.health.body_temperature; com.samsung.health.sleep; com.samsung.health.sleep_stage" />
         <activity android:name=".MainActivity"
             android:label="health data hub"
             android:screenOrientation="portrait" >

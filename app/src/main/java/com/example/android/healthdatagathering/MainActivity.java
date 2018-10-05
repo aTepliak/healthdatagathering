@@ -1,6 +1,10 @@
 
 package com.example.android.healthdatagathering;
+
 import com.anychart.APIlib;
+import com.anychart.AnyChart;
+import com.anychart.charts.Cartesian;
+import com.example.android.healthdatagathering.charts.ChartExample;
 import com.example.android.healthdatagathering.charts.ColumnChart;
 
 
@@ -17,6 +21,15 @@ import com.samsung.android.sdk.healthdata.HealthDataStore;
 import com.samsung.android.sdk.healthdata.HealthPermissionManager;
 import com.samsung.android.sdk.healthdata.HealthPermissionManager.PermissionKey;
 import com.samsung.android.sdk.healthdata.HealthPermissionManager.PermissionType;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -42,32 +55,34 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class MainActivity extends Activity{
-
-
-
+public class MainActivity extends Activity {
 
 
     public static final String APP_TAG = "HealthDataGathering";
     private static Context sContext;
-    @BindView(R.id.editHealthDateValue1) TextView mStepCountTv;
-    @BindView(R.id.editHealthDateValue2) TextView mBloodSugar;
-    @BindView(R.id.editHealthDateValue3) TextView mHeartRate;
-    @BindView(R.id.editHealthDateValue4) TextView mSleepTime;
-    @BindView(R.id.getData) Button getDataButton;
+    @BindView(R.id.editHealthDateValue1)
+    TextView mStepCountTv;
+    @BindView(R.id.editHealthDateValue2)
+    TextView mBloodSugar;
+    @BindView(R.id.editHealthDateValue3)
+    TextView mHeartRate;
+    @BindView(R.id.editHealthDateValue4)
+    TextView mSleepTime;
+    @BindView(R.id.getData)
+    Button getDataButton;
     private HealthDataStore mStore;
     private SamsungSHealthCollector mReporter;
-    private DataTransmittingJobService dataTrasmittingJobService ;
+    private DataTransmittingJobService dataTrasmittingJobService;
     private HealthDataGatheringApp app1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
 
-         // app1 = new  HealthDataGatheringApp();
-        sContext= getApplicationContext();
+        // app1 = new  HealthDataGatheringApp();
+        sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
-        HealthDataAtomicDao repo =   AppDatabase.getInstance(sContext ).healthDataAtomicDao();
+        HealthDataAtomicDao repo = AppDatabase.getInstance(sContext).healthDataAtomicDao();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -87,7 +102,65 @@ public class MainActivity extends Activity{
         dataTrasmittingJobService.schedule(sContext, dataTrasmittingJobService.ONE_DAY_INTERVAL);
 
 
+        ChartExample chartExample = new ChartExample();
+        AnyChartView anyChartView = findViewById(R.id.any_chart_view);
+        APIlib.getInstance().setActiveAnyChartView(anyChartView);
+        anyChartView.setChart(chartExample.getBloodSugarExample());
+        anyChartView.setVisibility(View.GONE);
 
+
+        AnyChartView anyChartView1 = findViewById(R.id.any_chart_view1);
+        APIlib.getInstance().setActiveAnyChartView(anyChartView1);
+        anyChartView1.setChart(chartExample.getSleepExample());
+        anyChartView1.setVisibility(View.GONE);
+
+        AnyChartView anyChartView2 = findViewById(R.id.any_chart_view2);
+        APIlib.getInstance().setActiveAnyChartView(anyChartView2);
+        anyChartView2.setChart(chartExample.getHeartRateExample());
+        anyChartView2.setVisibility(View.GONE);
+
+
+        Spinner dynamicSpinner = (Spinner) findViewById(R.id.dynamic_spinner);
+
+        String[] items = new String[]{"Steps", "Blood Glucose", "Blood Pressure", "Floors Climbed", "Sleep", "Sleep Stage", "Heart Rate",
+        "Caffeine Intake", "Blood Pressure", "Exercise", "Walking", "Water" ,"Calories", "Weight"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_dropdown_item, items);
+
+        dynamicSpinner.setAdapter(adapter);
+        final AnyChartView[] current = {anyChartView2};
+        dynamicSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                Log.v("item", (String) parent.getItemAtPosition(position));
+                String item = (String) parent.getItemAtPosition(position);
+
+                if (item.equals("Blood Glucose")) {
+                    current[0].setVisibility(View.GONE);
+                    anyChartView.setVisibility(View.VISIBLE);
+                    current[0] = anyChartView;
+                }
+                if (item.equals("Sleep Stage")) {
+                    current[0].setVisibility(View.GONE);
+                    anyChartView1.setVisibility(View.VISIBLE);
+                    current[0] = anyChartView1;
+                }
+                if (item.equals("Heart Rate")) {
+                    current[0].setVisibility(View.GONE);
+                    anyChartView2.setVisibility(View.VISIBLE);
+                    current[0] = anyChartView2;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+/*
         AnyChartView anyChartView = findViewById(R.id.any_chart_view);
         anyChartView.setProgressBar(findViewById(R.id.progress_bar));
         APIlib.getInstance().setActiveAnyChartView(anyChartView);
@@ -123,9 +196,7 @@ public class MainActivity extends Activity{
         data1.put("04-10", new Integer[] {49, 64, 100} );
 
         LineChart line = new LineChart(data1, "heart bit", "BpM","min","average","max"  );
-        anyChartView1.setChart(line.getCartesian());
-
-
+        anyChartView1.setChart(line.getCartesian());*/
 
 
     }
@@ -133,13 +204,14 @@ public class MainActivity extends Activity{
 
     @OnClick(R.id.getData)
     public void setGetDataButton(Button button) {
-        runOnUiThread(() -> mHeartRate.setText(String.valueOf(mReporter.getHeartRate() )));
-        runOnUiThread(() -> mBloodSugar.setText(String.valueOf(mReporter.getGlucoseValue() )));
-        runOnUiThread(() -> mStepCountTv.setText(String.valueOf(mReporter.getSteps() )));
-        runOnUiThread(() -> mSleepTime.setText( mReporter.getSleepAsDateString()));
+        runOnUiThread(() -> mHeartRate.setText(String.valueOf(mReporter.getHeartRate())));
+        runOnUiThread(() -> mBloodSugar.setText(String.valueOf(mReporter.getGlucoseValue())));
+        runOnUiThread(() -> mStepCountTv.setText(String.valueOf(mReporter.getSteps())));
+        runOnUiThread(() -> mSleepTime.setText(mReporter.getSleepAsDateString()));
 
 
     }
+
     @Override
     public void onDestroy() {
         mStore.disconnectService();
@@ -235,7 +307,7 @@ public class MainActivity extends Activity{
         try {
             // Check whether the permissions that this application needs are acquired
             Map<PermissionKey, Boolean> resultMap = pmsManager.isPermissionAcquired(generatePermissionKeySet());
-            return  resultMap.entrySet().stream().allMatch(e -> e.getValue() == true);
+            return resultMap.entrySet().stream().allMatch(e -> e.getValue() == true);
         } catch (Exception e) {
             Log.e(APP_TAG, "Permission request fails.", e);
         }
@@ -247,7 +319,7 @@ public class MainActivity extends Activity{
         HealthPermissionManager pmsManager = new HealthPermissionManager(mStore);
         try {
             // Show user permission UI for allowing user to change options
-            pmsManager.requestPermissions(generatePermissionKeySet(),MainActivity.this)
+            pmsManager.requestPermissions(generatePermissionKeySet(), MainActivity.this)
                     .setResultListener(result -> {
                         Log.d(APP_TAG, "Permission callback is received.");
                         Map<PermissionKey, Boolean> resultMap = result.getResultMap();
@@ -273,14 +345,13 @@ public class MainActivity extends Activity{
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.BloodGlucose.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.BloodPressure.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
-        //pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.FloorsClimbed.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.FloorsClimbed.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.Sleep.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.SleepStage.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.HeartRate.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
 
         return pmsKeySet;
     }
-
 
 
     private SamsungSHealthCollector.StepCountObserver mStepCountObserver = steps -> {

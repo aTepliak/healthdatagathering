@@ -29,7 +29,8 @@ public class SamsungSHealthCollector {
     int steps;
     float glucoseValue;
     int healthDataCounter;
-
+    int floorsClimbed;
+    String floors;
     private final HealthResultHolder.ResultListener<ReadResult> mListener = result -> {
 
 
@@ -39,14 +40,15 @@ public class SamsungSHealthCollector {
                 healthDataCounter++;
                 float newGlucoseValue= data.getFloat(HealthConstants.BloodGlucose.GLUCOSE);
                 if (newGlucoseValue!=0) glucoseValue= newGlucoseValue;
+                floorsClimbed += ( floors =data.getString(HealthConstants.FloorsClimbed.FLOOR))!=null ? Integer.parseInt(floors):0 ;
                 float newHeartRate = data.getFloat(HealthConstants.HeartRate.HEART_RATE);
                 if(newHeartRate!=0) heartRate = newHeartRate;
                 sleepStart += data.getFloat(HealthConstants.Sleep.START_TIME);
                 sleepEnd += data.getFloat(HealthConstants.Sleep.END_TIME);
-                Log.i("Glukose; heartrate; sleepEnd", glucoseValue + "; " + heartRate + ";" + sleepEnd);
-
+                Log.i("Glukose; heartrate; sleepEnd:", glucoseValue + "; " + heartRate + ";" + sleepEnd);
                 steps += data.getInt(HealthConstants.StepCount.COUNT);
-                Log.i("Steps", String.valueOf(steps));
+                Log.i("Steps:", String.valueOf(steps));
+                Log.i("Floors climbed:", String.valueOf(floorsClimbed));
             }
         } finally {
             result.close();
@@ -160,6 +162,7 @@ public class SamsungSHealthCollector {
 
 
     public String getSleepAsDateString(){
+        if(sleepStart==sleepEnd)return  "no data available for today";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String sleepTime = format.format(new Date(sleepStart ))  + "-" +
                 format.format(new Date (sleepEnd  ));
