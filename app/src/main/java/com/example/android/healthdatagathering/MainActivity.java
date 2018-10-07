@@ -82,7 +82,6 @@ public class MainActivity extends Activity {
         // app1 = new  HealthDataGatheringApp();
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
-        HealthDataAtomicDao repo = AppDatabase.getInstance(sContext).healthDataAtomicDao();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -160,44 +159,6 @@ public class MainActivity extends Activity {
                 // TODO Auto-generated method stub
             }
         });
-/*
-        AnyChartView anyChartView = findViewById(R.id.any_chart_view);
-        anyChartView.setProgressBar(findViewById(R.id.progress_bar));
-        APIlib.getInstance().setActiveAnyChartView(anyChartView);
-
-        HashMap<String, Integer> data = new HashMap<>();
-        data.put("02-10", 103);
-        data.put("03-10", 99);
-        data.put("04-10", 112);
-
-
-        ColumnChart cartesian = new ColumnChart(data,"Blood Sugar values for last 3 days","","" , "Mg/dL");
-
-        anyChartView.setChart(cartesian.getCartesian());
-
-        AnyChartView anyChartView2 = findViewById(R.id.any_chart_view2);
-        APIlib.getInstance().setActiveAnyChartView(anyChartView2);
-        HashMap<String, Integer> sleepData = new HashMap<>();
-        sleepData.put("deep", 64);
-        sleepData.put("light",321 );
-        sleepData.put("REM", 57);
-
-        PieChart pie = new PieChart(sleepData );
-        anyChartView2.setChart(pie.getPieChart());
-
-
-
-
-        AnyChartView anyChartView1 = findViewById(R.id.any_chart_view1);
-        APIlib.getInstance().setActiveAnyChartView(anyChartView1);
-        HashMap<String, Integer[]> data1 = new HashMap<String, Integer[]>();
-        data1.put("02-10", new Integer[] {52, 62, 98});
-        data1.put("03-10",new Integer[] {54, 60, 112} );
-        data1.put("04-10", new Integer[] {49, 64, 100} );
-
-        LineChart line = new LineChart(data1, "heart bit", "BpM","min","average","max"  );
-        anyChartView1.setChart(line.getCartesian());*/
-
 
     }
 
@@ -349,6 +310,9 @@ public class MainActivity extends Activity {
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.Sleep.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.SleepStage.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
         pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.HeartRate.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.OxygenSaturation.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.UvExposure.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
+        pmsKeySet.add(new HealthPermissionManager.PermissionKey(HealthConstants.BodyTemperature.HEALTH_DATA_TYPE, HealthPermissionManager.PermissionType.READ));
 
         return pmsKeySet;
     }

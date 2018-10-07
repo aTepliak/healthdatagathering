@@ -1,6 +1,9 @@
 package com.example.android.healthdatagathering.samsugshealth;
 
 import com.example.android.healthdatagathering.MainActivity;
+import com.example.android.healthdatagathering.database.AppDatabase;
+import com.example.android.healthdatagathering.database.dao.HealthDataAtomicDao;
+import com.example.android.healthdatagathering.database.entity.HealthDataAtomic;
 import com.samsung.android.sdk.healthdata.HealthConstants;
 import com.samsung.android.sdk.healthdata.HealthData;
 import com.samsung.android.sdk.healthdata.HealthDataObserver;
@@ -14,10 +17,11 @@ import android.util.Log;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.TimeZone;
-
 
 public class SamsungSHealthCollector {
     private final HealthDataStore mStore;
@@ -31,24 +35,31 @@ public class SamsungSHealthCollector {
     int healthDataCounter;
     int floorsClimbed;
     String floors;
+    float oxygenSaturation;
+    int sleepStage;
+    float uvExplosure;
+    float bodyTemperature;
+    long startTime = getStartTimeOfToday();
+    long endTime = startTime + ONE_DAY_IN_MILLIS;
     private final HealthResultHolder.ResultListener<ReadResult> mListener = result -> {
-
-
-
         try {
             for (HealthData data : result) {
                 healthDataCounter++;
                 float newGlucoseValue= data.getFloat(HealthConstants.BloodGlucose.GLUCOSE);
                 if (newGlucoseValue!=0) glucoseValue= newGlucoseValue;
                 floorsClimbed += ( floors =data.getString(HealthConstants.FloorsClimbed.FLOOR))!=null ? Integer.parseInt(floors):0 ;
+                sleepStage +=  data.getInt(HealthConstants.SleepStage.STAGE) ;
                 float newHeartRate = data.getFloat(HealthConstants.HeartRate.HEART_RATE);
                 if(newHeartRate!=0) heartRate = newHeartRate;
+                bodyTemperature = data.getFloat(HealthConstants.BodyTemperature.TEMPERATURE);
+                uvExplosure = data.getFloat(HealthConstants.UvExposure.UV_INDEX);
                 sleepStart += data.getFloat(HealthConstants.Sleep.START_TIME);
                 sleepEnd += data.getFloat(HealthConstants.Sleep.END_TIME);
                 Log.i("Glukose; heartrate; sleepEnd:", glucoseValue + "; " + heartRate + ";" + sleepEnd);
                 steps += data.getInt(HealthConstants.StepCount.COUNT);
                 Log.i("Steps:", String.valueOf(steps));
                 Log.i("Floors climbed:", String.valueOf(floorsClimbed));
+                oxygenSaturation+=data.getFloat(HealthConstants.OxygenSaturation.SPO2);
             }
         } finally {
             result.close();
@@ -73,11 +84,10 @@ public class SamsungSHealthCollector {
         void onChanged(int count);
     }
 
-
-
     public SamsungSHealthCollector(HealthDataStore store) {
         mStore = store;
     }
+
 
     public void start(StepCountObserver listener) {
         mStepCountObserver = listener;
@@ -87,8 +97,6 @@ public class SamsungSHealthCollector {
     }
 
     public void start() {
-
-
         readTodayStepCount();
     }
 
@@ -98,8 +106,13 @@ public class SamsungSHealthCollector {
         readTodayData(HealthConstants.StepCount.HEALTH_DATA_TYPE, HealthConstants.StepCount.COUNT, HealthConstants.StepCount.START_TIME, HealthConstants.StepCount.TIME_OFFSET);
         readTodayData(HealthConstants.BloodGlucose.HEALTH_DATA_TYPE, HealthConstants.BloodGlucose.GLUCOSE, HealthConstants.BloodGlucose.START_TIME, HealthConstants.BloodGlucose.TIME_OFFSET);
         readTodayData(HealthConstants.HeartRate.HEALTH_DATA_TYPE, HealthConstants.HeartRate.HEART_RATE, HealthConstants.HeartRate.START_TIME, HealthConstants.HeartRate.TIME_OFFSET);
-        readTodayData(HealthConstants.Sleep.HEALTH_DATA_TYPE, HealthConstants.Sleep.START_TIME, HealthConstants.HeartRate.START_TIME, HealthConstants.HeartRate.TIME_OFFSET);
-        readTodayData(HealthConstants.Sleep.HEALTH_DATA_TYPE, HealthConstants.Sleep.END_TIME, HealthConstants.HeartRate.START_TIME, HealthConstants.HeartRate.TIME_OFFSET);
+        readTodayData(HealthConstants.Sleep.HEALTH_DATA_TYPE, HealthConstants.Sleep.START_TIME, HealthConstants.Sleep.START_TIME, HealthConstants.Sleep.TIME_OFFSET);
+        readTodayData(HealthConstants.Sleep.HEALTH_DATA_TYPE, HealthConstants.Sleep.END_TIME, HealthConstants.HeartRate.START_TIME, HealthConstants.Sleep.TIME_OFFSET);
+        readTodayData(HealthConstants.SleepStage.HEALTH_DATA_TYPE, HealthConstants.SleepStage.STAGE, HealthConstants.SleepStage.START_TIME, HealthConstants.SleepStage.TIME_OFFSET);
+        readTodayData(HealthConstants.FloorsClimbed.HEALTH_DATA_TYPE, HealthConstants.FloorsClimbed.FLOOR, HealthConstants.FloorsClimbed.START_TIME, HealthConstants.FloorsClimbed.TIME_OFFSET);
+        readTodayData(HealthConstants.OxygenSaturation.HEALTH_DATA_TYPE, HealthConstants.OxygenSaturation.SPO2, HealthConstants.OxygenSaturation.START_TIME, HealthConstants.OxygenSaturation.TIME_OFFSET);
+        readTodayData(HealthConstants.UvExposure.HEALTH_DATA_TYPE, HealthConstants.UvExposure.UV_INDEX, HealthConstants.UvExposure.START_TIME, HealthConstants.UvExposure.TIME_OFFSET);
+        readTodayData(HealthConstants.BodyTemperature.HEALTH_DATA_TYPE, HealthConstants.BodyTemperature.TEMPERATURE, HealthConstants.BodyTemperature.START_TIME, HealthConstants.BodyTemperature.TIME_OFFSET);
 
     }
 
@@ -108,8 +121,7 @@ public class SamsungSHealthCollector {
         HealthDataResolver resolver = new HealthDataResolver(mStore, null);
 
         // Set time range from start time of today to the current time
-        long startTime = getStartTimeOfToday();
-        long endTime = startTime + ONE_DAY_IN_MILLIS;
+
 
         HealthDataResolver.ReadRequest request = new ReadRequest.Builder()
                 .setDataType(healthDataType)
@@ -139,6 +151,29 @@ public class SamsungSHealthCollector {
     }
 
 
+    public int getFloorsClimbed() {
+        return floorsClimbed;
+    }
+
+    public String getFloors() {
+        return floors;
+    }
+
+    public float getOxygenSaturation() {
+        return oxygenSaturation;
+    }
+
+    public int getSleepStage() {
+        return sleepStage;
+    }
+
+    public float getUvExplosure() {
+        return uvExplosure;
+    }
+
+    public float getBodyTemperature() {
+        return bodyTemperature;
+    }
 
 
     public float getGlucoseValue() {
@@ -174,9 +209,20 @@ public class SamsungSHealthCollector {
         return steps;
     }
 
+    public  ArrayList<HealthDataAtomic> getDataForDb(){
+
+        ArrayList<HealthDataAtomic> listOfAtomicEntities = new ArrayList<>();
+            listOfAtomicEntities.add(new HealthDataAtomic("steps", new Date(startTime), new Date(endTime), getSteps()));
+            listOfAtomicEntities.add(new HealthDataAtomic("bloodGlucose", new Date(startTime), new Date(endTime), getGlucoseValue()));
+            listOfAtomicEntities.add(new HealthDataAtomic("floorsClimbed", new Date(startTime), new Date(endTime), getFloorsClimbed()));
+            listOfAtomicEntities.add(new HealthDataAtomic("sleepStage", new Date(startTime), new Date(endTime), getSleepStage()));
+            listOfAtomicEntities.add(new HealthDataAtomic("heartRate", new Date(startTime), new Date(endTime), getHeartRate()));
+            listOfAtomicEntities.add(new HealthDataAtomic("bodyTemperature", new Date(startTime), new Date(endTime), getBodyTemperature()));
+            listOfAtomicEntities.add(new HealthDataAtomic("uvExplosure", new Date(startTime), new Date(endTime), getUvExplosure()));
+            listOfAtomicEntities.add(new HealthDataAtomic("sleepTime", new Date(getSleepStart()), new Date(getSleepEnd()), "sleep start"));
+            listOfAtomicEntities.add(new HealthDataAtomic("oxgenSaturation", new Date(startTime), new Date(endTime), getOxygenSaturation()));
+
+        return  listOfAtomicEntities;
+    }
 
 }
-
-
-
-

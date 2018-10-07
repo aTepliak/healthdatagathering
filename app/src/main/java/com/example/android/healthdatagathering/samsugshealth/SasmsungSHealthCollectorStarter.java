@@ -22,12 +22,27 @@ import java.util.Set;
 import static com.example.android.healthdatagathering.MainActivity.APP_TAG;
 
 public class SasmsungSHealthCollectorStarter  {
-    public static final String COLLECOR_TAG = "Collecting HEALTH DATA HEREEEEEEE";
+    public static final String COLLECOR_TAG = "Collecting HEALTH DATA";
+
+    public HealthDataStore getmStore() {
+        return mStore;
+    }
+
     private HealthDataStore mStore;
+
+
+
     private SamsungSHealthCollector mReporter;
     private DataTransmittingJobService dataTrasmittingJobService;
-    private  HealthDataStore.ConnectionListener   mConnectionListener;
 
+    public HealthDataStore.ConnectionListener getmConnectionListener() {
+        return mConnectionListener;
+    }
+
+    private  HealthDataStore.ConnectionListener   mConnectionListener;
+    public SamsungSHealthCollector getmReporter() {
+        return mReporter;
+    }
      public void start()
 
     {

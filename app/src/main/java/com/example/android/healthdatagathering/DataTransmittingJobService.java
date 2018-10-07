@@ -8,13 +8,33 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.android.healthdatagathering.database.AppDatabase;
+import com.example.android.healthdatagathering.database.dao.HealthDataAtomicDao;
 import com.example.android.healthdatagathering.samsugshealth.SamsungSHealthCollector;
 import com.example.android.healthdatagathering.samsugshealth.SasmsungSHealthCollectorStarter;
+import com.google.gson.Gson;
 import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
+import com.samsung.android.sdk.healthdata.HealthConstants;
 import com.samsung.android.sdk.healthdata.HealthDataService;
 import com.samsung.android.sdk.healthdata.HealthDataStore;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class DataTransmittingJobService extends JobService {
+    /*
+      REPLACE THE END-POINT URL HERE:
+     */
+    String urlAsString = "localhost:8080/save";
     HealthDataStore.ConnectionListener mConnectionListener;
     SamsungSHealthCollector mReporter;
      private static final String APP_TAG = "Collecting scheduled";
@@ -22,6 +42,8 @@ public class DataTransmittingJobService extends JobService {
     public static final long ONE_DAY_INTERVAL =  15* 60 * 1000; // 24 * 60 * 60 * 1000L; // 1 Day
     private  boolean allJobsFinished = false; // not going to be finished normally
     private SasmsungSHealthCollectorStarter starter = new SasmsungSHealthCollectorStarter();
+    private  static Context sContext;
+    SamsungSHealthCollector collector = new SamsungSHealthCollector(starter.getmStore());
 
     public static void schedule(Context context, long intervalMillis) {
         JobScheduler jobScheduler = (JobScheduler)
@@ -32,6 +54,7 @@ public class DataTransmittingJobService extends JobService {
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
         builder.setPeriodic(intervalMillis);
         jobScheduler.schedule(builder.build());
+        sContext = context;
     }
 
     public static void cancel(Context context) {
@@ -42,8 +65,18 @@ public class DataTransmittingJobService extends JobService {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
+        HealthDataAtomicDao atomicDao = AppDatabase.getInstance(this).healthDataAtomicDao();
         /* executing a task synchronously */
-      // starter.start();
+        starter.start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                 //save to local smartphone database for local visualization
+              collector.getDataForDb().forEach(atomicData->atomicDao.insert(atomicData));
+            }
+        }) .start();
+        String jsonAsString = new Gson().toJson(collector.getDataForDb());
+        makePostRequest(urlAsString, jsonAsString);
 
 
         if (allJobsFinished) {
@@ -63,8 +96,26 @@ public class DataTransmittingJobService extends JobService {
 
 
 
+    private void makePostRequest(String urlAsString,
+                                       String jsonObjectAsString)  {
+        try {
+            URL url = new URL(urlAsString);
+            HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Content-Type", "application/json");
+            httpURLConnection.connect();
+            DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
+            wr.writeBytes(jsonObjectAsString);
+            wr.flush();
+            wr.close();
 
-
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

@@ -30,26 +30,27 @@ public class HealthDataAtomic extends HealthDataComponentType {
     private String stringValue;
     private Float floatValue;
 
-    public HealthDataAtomic(String name, Date startTime, Date endTime, long id, String stringValue) {
+    public HealthDataAtomic(String name, Date startTime, Date endTime, long id, String stringValue, float floatValue) {
         super(name, startTime, endTime);
         this.id = id;
         this.stringValue=stringValue;
-    }
-    @Ignore
-    public HealthDataAtomic(String name, Date startTime, Date endTime, long id, float floatValue) {
-        super(name, startTime, endTime);
-        this.id = id;
         this.floatValue=floatValue;
+    }
+   @Ignore
+    public HealthDataAtomic(String name, Date startTime, Date endTime,   float floatValue) {
+
+        this(name, startTime,endTime, null, floatValue);
     }
     @Ignore
     public HealthDataAtomic(String name, Date startTime, Date endTime,   String stringValue) {
-        super(name, startTime, endTime);
-        this.stringValue=stringValue;
+        this(name, startTime,endTime, stringValue, null);
     }
     @Ignore
-    public HealthDataAtomic(String name, Date startTime, Date endTime,   float floatValue) {
+    public HealthDataAtomic(String name, Date startTime, Date endTime,  String stringValue, Float floatValue) {
         super(name, startTime, endTime);
-        this.floatValue=floatValue;
+        this.id = id;
+        this.stringValue = stringValue;
+        this.floatValue = floatValue;
     }
 
     public long getId() {
