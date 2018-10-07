@@ -1,3 +1,37 @@
 <resources>
     <string name="app_name">HealthDataGathering</string>
+    <string name="desc">Health Data Collection</string>
+    <string name="title1">Today\'s Steps</string>
+    <string name="title2">Today\'s  Blood Sugar</string>
+    <string name="title3">Today\'s Heart Rate</string>
+    <string name="title4">Today\'s Sleep Time</string>
+    <string name="unit1">Steps</string>
+    <string name="unit2">Mg/dL</string>
+    <string name="unit3">Beats per Minute</string>
+    <string name="unit4"> </string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="connect_to_shealth">Connect to Samsung Health</string>
+
+    <string name="notice">Notice</string>
+    <string name="msg_perm_acquired">All permissions should be acquired</string>
+    <string name="msg_conn_not_available">Connection with Samsung Health is not available</string>
+    <string name="msg_req_install">Please install Samsung Health</string>
+    <string name="msg_req_upgrade">Please upgrade Samsung Health</string>
+    <string name="msg_req_enable">Please enable Samsung Health</string>
+    <string name="msg_req_agree">Please agree with Samsung Health policy</string>
+    <string name="msg_req_available">Please make Samsung Health available</string>
+
+
+        <string-array name="brew_array">
+            <item>Steps</item>
+            <item>Blood Glucose</item>
+            <item>Blood Pressure</item>
+            <item>Floors Climbed</item>
+            <item>Heart Rate</item>
+        </string-array>
+
+
 </resources>

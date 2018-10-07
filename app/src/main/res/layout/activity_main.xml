@@ -1,18 +1,204 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:scrollbars="vertical">
 
-    <TextView
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+
+<!--
+        <Spinner
+            android:id="@+id/static_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp" />-->
+
+        <Spinner
+            android:id="@+id/dynamic_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"/>
+
+
+    <com.anychart.AnyChartView
+        android:id="@+id/any_chart_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="500dp"
+        />
 
-</android.support.constraint.ConstraintLayout>
+    <com.anychart.AnyChartView
+        android:id="@+id/any_chart_view1"
+        android:layout_width="wrap_content"
+        android:layout_height="500dp"
+        />
+
+    <com.anychart.AnyChartView
+        android:id="@+id/any_chart_view2"
+        android:layout_width="wrap_content"
+        android:layout_height="500dp"
+        />
+  <!--  <com.anychart.AnyChartView
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        />-->
+
+
+
+        <TextView
+            android:layout_width="10dp"
+            android:background="#7F7F7F"
+            android:layout_height="40dp"
+            android:layout_marginTop="100dp"/>
+
+        <TextView
+            android:id="@+id/textDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:paddingLeft="15dp"
+            android:text="@string/desc" />
+
+
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="20sp"
+                android:text="@string/title1" />
+
+            <TextView
+                android:id="@+id/editHealthDateValue1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#C0C0C0"
+                android:gravity="center_horizontal"
+                android:textSize="15sp"
+                android:text="@string/unit1" />
+
+
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="20sp"
+                android:text="@string/title2" />
+
+            <TextView
+                android:id="@+id/editHealthDateValue2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#C0C0C0"
+                android:gravity="center_horizontal"
+                android:textSize="15sp"
+                android:text="@string/unit2" />
+
+
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="20sp"
+                android:text="@string/title3" />
+
+            <TextView
+                android:id="@+id/editHealthDateValue3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#C0C0C0"
+                android:gravity="center_horizontal"
+                android:textSize="15sp"
+                android:text="@string/unit3" />
+
+
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="20sp"
+                android:text="@string/title4" />
+
+            <TextView
+                android:id="@+id/editHealthDateValue4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:textSize="30sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#C0C0C0"
+                android:gravity="center_horizontal"
+                android:textSize="15sp"
+                android:text="@string/unit4" />
+
+
+           <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4A7EBB" />
+
+        <Button
+            android:id="@+id/getData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+
+
+
+
+
+
+</LinearLayout>
+
+
+</ScrollView>
