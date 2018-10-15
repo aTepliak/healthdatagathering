@@ -122,7 +122,7 @@ public class MainActivity extends Activity {
         Spinner dynamicSpinner = (Spinner) findViewById(R.id.dynamic_spinner);
 
         String[] items = new String[]{"Steps", "Blood Glucose", "Blood Pressure", "Floors Climbed", "Sleep", "Sleep Stage", "Heart Rate",
-        "Caffeine Intake", "Blood Pressure", "Exercise", "Walking", "Water" ,"Calories", "Weight"};
+        "Caffeine Intake", "Blood Pressure", "Exercise", "Walking", "Water" ,"Calories", "Distance"};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, items);
@@ -137,7 +137,7 @@ public class MainActivity extends Activity {
                 Log.v("item", (String) parent.getItemAtPosition(position));
                 String item = (String) parent.getItemAtPosition(position);
 
-                if (item.equals("Blood Glucose")) {
+                if (item.equals("Caffeine Intake")) {
                     current[0].setVisibility(View.GONE);
                     anyChartView.setVisibility(View.VISIBLE);
                     current[0] = anyChartView;
@@ -147,7 +147,7 @@ public class MainActivity extends Activity {
                     anyChartView1.setVisibility(View.VISIBLE);
                     current[0] = anyChartView1;
                 }
-                if (item.equals("Heart Rate")) {
+                if (item.equals("Distance")) {
                     current[0].setVisibility(View.GONE);
                     anyChartView2.setVisibility(View.VISIBLE);
                     current[0] = anyChartView2;

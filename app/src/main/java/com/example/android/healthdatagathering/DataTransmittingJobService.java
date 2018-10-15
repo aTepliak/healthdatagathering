@@ -71,7 +71,7 @@ public class DataTransmittingJobService extends JobService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                 //save to local smartphone database for local visualization
+                 //save to local smartphone database
               collector.getDataForDb().forEach(atomicData->atomicDao.insert(atomicData));
             }
         }) .start();

@@ -14,12 +14,12 @@ public class ChartExample {
 
     public Cartesian getBloodSugarExample() {
         HashMap<String, Integer> data = new HashMap<>();
-        data.put("02-10", 103);
-        data.put("03-10", 99);
-        data.put("04-10", 112);
+        data.put("02-10", 300);
+        data.put("03-10", 200);
+        data.put("04-10", 350);
 
 
-        ColumnChart cartesian = new ColumnChart(data, "Blood Sugar values for last 3 days", "", "", "Mg/dL");
+        ColumnChart cartesian = new ColumnChart(data, "Caffeine Intake for last 3 days", "", "", "mg");
         Cartesian getCartExample = cartesian.getCartesian();
        return  getCartExample;
     }
@@ -35,11 +35,11 @@ public class ChartExample {
 
     public  Cartesian getHeartRateExample(){
         HashMap<String, Integer[]> data1 = new HashMap<String, Integer[]>();
-        data1.put("02-10", new Integer[] {52, 62, 98});
-        data1.put("03-10",new Integer[] {54, 60, 112} );
-        data1.put("04-10", new Integer[] {49, 64, 100} );
+        data1.put("02-10", new Integer[] {3458, 512, 202});
+        data1.put("03-10",new Integer[] {8471, 416, 38} );
+        data1.put("04-10", new Integer[] {12147, 785, 0} );
 
-        LineChart line = new LineChart(data1, "heart bit", "BpM","min","average","max"  );
+        LineChart line = new LineChart(data1, "Distance", "meters","walking","running","swimming"  );
         return  line.getCartesian();
     }
 }
