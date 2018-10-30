@@ -84,7 +84,7 @@ public class SamsungSHealthCollector {
         void onChanged(int count);
     }
 
-    public SamsungSHealthCollector(HealthDataStore store) {
+    public SamsungSHealthCollector(HealthDataStore store  ) {
         mStore = store;
     }
 
@@ -210,8 +210,7 @@ public class SamsungSHealthCollector {
     }
 
     public  ArrayList<HealthDataAtomic> getDataForDb(){
-
-        ArrayList<HealthDataAtomic> listOfAtomicEntities = new ArrayList<>();
+         ArrayList<HealthDataAtomic> listOfAtomicEntities = new ArrayList<>();
             listOfAtomicEntities.add(new HealthDataAtomic("steps", new Date(startTime), new Date(endTime), getSteps()));
             listOfAtomicEntities.add(new HealthDataAtomic("bloodGlucose", new Date(startTime), new Date(endTime), getGlucoseValue()));
             listOfAtomicEntities.add(new HealthDataAtomic("floorsClimbed", new Date(startTime), new Date(endTime), getFloorsClimbed()));

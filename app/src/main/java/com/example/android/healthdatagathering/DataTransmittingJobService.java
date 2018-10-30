@@ -13,6 +13,7 @@ import com.example.android.healthdatagathering.database.dao.HealthDataAtomicDao;
 import com.example.android.healthdatagathering.samsugshealth.SamsungSHealthCollector;
 import com.example.android.healthdatagathering.samsugshealth.SasmsungSHealthCollectorStarter;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
 import com.samsung.android.sdk.healthdata.HealthConstants;
 import com.samsung.android.sdk.healthdata.HealthDataService;
@@ -34,15 +35,16 @@ public class DataTransmittingJobService extends JobService {
     /*
       REPLACE THE END-POINT URL HERE:
      */
-    String urlAsString = "localhost:8080/save";
+    String urlAsString = "http://192.168.0.63:8080/collect/atomics";
     HealthDataStore.ConnectionListener mConnectionListener;
     SamsungSHealthCollector mReporter;
-     private static final String APP_TAG = "Collecting scheduled";
-     private static final int JOB_ID = 1;
-    public static final long ONE_DAY_INTERVAL =  15* 60 * 1000; // 24 * 60 * 60 * 1000L; // 1 Day
-    private  boolean allJobsFinished = false; // not going to be finished normally
+    private static final String APP_TAG = "Collecting scheduled";
+    private static final int JOB_ID = 1;
+    public static final long ONE_DAY_INTERVAL = 15 * 60 * 1000; // 24 * 60 * 60 * 1000L; // 1 Day
+    private boolean allJobsFinished = false; // not going to be finished normally
     private SasmsungSHealthCollectorStarter starter = new SasmsungSHealthCollectorStarter();
-    private  static Context sContext;
+    private static Context sContext;
+    private HttpPostRequest httpPostRequest = new HttpPostRequest();
     SamsungSHealthCollector collector = new SamsungSHealthCollector(starter.getmStore());
 
     public static void schedule(Context context, long intervalMillis) {
@@ -71,13 +73,16 @@ public class DataTransmittingJobService extends JobService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                 //save to local smartphone database
-              collector.getDataForDb().forEach(atomicData->atomicDao.insert(atomicData));
+                //save to local smartphone database
+                collector.getDataForDb().forEach(atomicData -> atomicDao.insert(atomicData));
             }
-        }) .start();
-        String jsonAsString = new Gson().toJson(collector.getDataForDb());
-        makePostRequest(urlAsString, jsonAsString);
-
+        }).start();
+        Gson gson = new GsonBuilder()
+                .setDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz").create();
+        String jsonAsString = gson.toJson(collector.getDataForDb());
+        Log.i("HTTP ","start sending");
+         httpPostRequest.execute(urlAsString, jsonAsString);
+        Log.i("HTTP ","finished sending");
 
         if (allJobsFinished) {
             // To finish a periodic JobService,
@@ -92,29 +97,6 @@ public class DataTransmittingJobService extends JobService {
     @Override
     public boolean onStopJob(JobParameters params) {
         return false;
-    }
-
-
-
-    private void makePostRequest(String urlAsString,
-                                       String jsonObjectAsString)  {
-        try {
-            URL url = new URL(urlAsString);
-            HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setRequestProperty("Content-Type", "application/json");
-            httpURLConnection.connect();
-            DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-            wr.writeBytes(jsonObjectAsString);
-            wr.flush();
-            wr.close();
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
