@@ -58,7 +58,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class MainActivity extends Activity {
+public class SamsungSHealthActivity extends Activity {
 
 
     public static final String APP_TAG = "HealthDataGathering";
@@ -81,6 +81,8 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
+        System.out.println("ACTIVITY STARTTTTTTTTTTTTTTTTTTTTTTTTED");
+        finish();
         sContext = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -92,13 +94,13 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        dataTrasmittingJobService = new DataTransmittingJobService();
+       // dataTrasmittingJobService = new DataTransmittingJobService();
         // Create a HealthDataStore instance and set its listener
         mStore = new HealthDataStore(sContext, mConnectionListener);
         // Request the connection to the health data store
         mStore.connectService();
         //starting the job schedular once a day
-        dataTrasmittingJobService.schedule(sContext, dataTrasmittingJobService.ONE_DAY_INTERVAL);
+       // dataTrasmittingJobService.schedule(sContext, dataTrasmittingJobService.ONE_DAY_INTERVAL);
 
 
 
@@ -123,7 +125,7 @@ public class MainActivity extends Activity {
         Spinner dynamicSpinner = (Spinner) findViewById(R.id.dynamic_spinner);
 
         String[] items = new String[]{"Steps", "Blood Glucose", "Blood Pressure", "Floors Climbed", "Sleep", "Sleep Stage", "Heart Rate",
-        "Caffeine Intake", "Blood Pressure", "Exercise", "Walking", "Water" ,"Calories", "Distance"};
+                "Caffeine Intake", "Blood Pressure", "Exercise", "Walking", "Water" ,"Calories", "Distance"};
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_dropdown_item, items);
@@ -214,7 +216,7 @@ public class MainActivity extends Activity {
             return;
         }
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(SamsungSHealthActivity.this);
         alert.setTitle(R.string.notice)
                 .setMessage(R.string.msg_perm_acquired)
                 .setPositiveButton(R.string.ok, null)
@@ -252,7 +254,7 @@ public class MainActivity extends Activity {
 
         alert.setPositiveButton(R.string.ok, (dialog, id) -> {
             if (error.hasResolution()) {
-                error.resolve(MainActivity.this);
+                error.resolve(SamsungSHealthActivity.this);
             }
         });
 
@@ -281,7 +283,7 @@ public class MainActivity extends Activity {
         HealthPermissionManager pmsManager = new HealthPermissionManager(mStore);
         try {
             // Show user permission UI for allowing user to change options
-            pmsManager.requestPermissions(generatePermissionKeySet(), MainActivity.this)
+            pmsManager.requestPermissions(generatePermissionKeySet(), SamsungSHealthActivity.this)
                     .setResultListener(result -> {
                         Log.d(APP_TAG, "Permission callback is received.");
                         Map<PermissionKey, Boolean> resultMap = result.getResultMap();

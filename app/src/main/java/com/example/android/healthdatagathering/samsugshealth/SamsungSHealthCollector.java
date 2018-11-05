@@ -39,6 +39,9 @@ public class SamsungSHealthCollector {
     int sleepStage;
     float uvExplosure;
     float bodyTemperature;
+
+
+
     long startTime = getStartTimeOfToday();
     long endTime = startTime + ONE_DAY_IN_MILLIS;
     private final HealthResultHolder.ResultListener<ReadResult> mListener = result -> {

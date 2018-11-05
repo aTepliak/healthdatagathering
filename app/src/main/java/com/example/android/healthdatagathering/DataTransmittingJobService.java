@@ -6,6 +6,7 @@ import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.example.android.healthdatagathering.database.AppDatabase;
@@ -69,6 +70,11 @@ public class DataTransmittingJobService extends JobService {
     public boolean onStartJob(final JobParameters params) {
         HealthDataAtomicDao atomicDao = AppDatabase.getInstance(this).healthDataAtomicDao();
         /* executing a task synchronously */
+        System.out.println( params.getExtras().getLong("lat"));
+        System.out.println("----------------------------------------------------"+ params.getExtras().getLong("lon"));
+        Intent dialogIntent = new Intent(this, SamsungSHealthActivity.class);
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(dialogIntent);
         starter.start();
         new Thread(new Runnable() {
             @Override
@@ -78,8 +84,8 @@ public class DataTransmittingJobService extends JobService {
             }
         }).start();
         Gson gson = new GsonBuilder()
-                .setDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz").create();
-        String jsonAsString = gson.toJson(collector.getDataForDb());
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
+        String jsonAsString = new Gson().toJson(collector.getDataForDb());
         Log.i("HTTP ","start sending");
          httpPostRequest.execute(urlAsString, jsonAsString);
         Log.i("HTTP ","finished sending");
