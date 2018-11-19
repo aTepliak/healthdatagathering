@@ -1,5 +1,4 @@
-# healthdatagathering
-android app for gathering health data (bachelor thesis)
+
 # HealthDataGathering
 
 Android application and web service to collect and visualize data from wearable devices
