@@ -6,12 +6,12 @@ import android.arch.persistence.room.Index;
 
 
 /**
- *implementing many to many relation. One composite can be a part of many other components
- *and one composite may include many other composites
+ * implementing many to many relation. One composite can be a part of many other components
+ * and one composite may include many other composites
  */
 
 @Entity(tableName = "composite_composite_join",
-        primaryKeys = { "compositeParentId", "compositeChildId" },
+        primaryKeys = {"compositeParentId", "compositeChildId"},
         foreignKeys = {
                 @ForeignKey(entity = HealthDataComposite.class,
                         parentColumns = "id",
@@ -20,7 +20,7 @@ import android.arch.persistence.room.Index;
                 @ForeignKey(entity = HealthDataComposite.class,
                         parentColumns = "id",
                         childColumns = "compositeChildId")
-        },indices = {@Index("compositeChildId")})
+        }, indices = {@Index("compositeChildId")})
 public class CompositeCompositeJoin {
     private long compositeParentId;
     private long compositeChildId;

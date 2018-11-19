@@ -1,26 +1,13 @@
 package com.example.android.healthdatagathering.database.entity;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
-
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 
 public abstract class HealthDataComponentType implements HealthData {
 
-
-
     private String name;
-
-    public boolean isNumericValue() {
-        return numericValue;
-    }
-
     private boolean numericValue;
     private Date startTime;
     private Date endTime;
@@ -59,12 +46,15 @@ public abstract class HealthDataComponentType implements HealthData {
         this.numericValue = numericValue;
     }
 
+    public boolean isNumericValue() {
+        return numericValue;
+    }
+
     @Override
     abstract public String getStringRepresentation();
 
     @Override
     abstract public JSONObject getJSONRepresentation();
-
 
 
 }

@@ -7,43 +7,34 @@ import android.arch.persistence.room.PrimaryKey;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity(indices = {@Index("id")})
 public class HealthDataComposite implements HealthData {
     @PrimaryKey(autoGenerate = true)
     private long id;
-
     private String name;
-
-
-
     private Date startTime;
-
     private Date endTime;
-
-
 
     @Ignore
     public HealthDataComposite(String name, Date startTime, Date endTime) {
         this.name = name;
-
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public HealthDataComposite(long id, String name,  Date startTime, Date endTime) {
+    public HealthDataComposite(long id, String name, Date startTime, Date endTime) {
         this.id = id;
         this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public long getId(){
+    public long getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }
@@ -77,6 +68,5 @@ public class HealthDataComposite implements HealthData {
     public JSONObject getJSONRepresentation() {
         return null;
     }
-
 
 }

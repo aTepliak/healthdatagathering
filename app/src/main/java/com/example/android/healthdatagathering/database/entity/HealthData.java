@@ -2,13 +2,10 @@ package com.example.android.healthdatagathering.database.entity;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
-public interface HealthData    {
+public interface HealthData {
 
     String getStringRepresentation();
+
     JSONObject getJSONRepresentation();
-
-
 
 }

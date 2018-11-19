@@ -14,17 +14,17 @@ import com.example.android.healthdatagathering.database.dao.HealthDataComplexDao
 import com.example.android.healthdatagathering.database.dao.HealthDataCompositeDao;
 import com.example.android.healthdatagathering.database.entity.CompositeComponentJoin;
 import com.example.android.healthdatagathering.database.entity.CompositeCompositeJoin;
-import com.example.android.healthdatagathering.database.entity.HealthData;
 import com.example.android.healthdatagathering.database.entity.HealthDataAtomic;
 import com.example.android.healthdatagathering.database.entity.HealthDataComplex;
 import com.example.android.healthdatagathering.database.entity.HealthDataComposite;
 
 @Database(entities = {HealthDataComposite.class, HealthDataComplex.class, HealthDataAtomic.class,
         CompositeCompositeJoin.class, CompositeComponentJoin.class},
-        version = 1,exportSchema = false)
+        version = 1, exportSchema = false)
 @TypeConverters({DateConverter.class, FloatArrayListConverter.class, StringArrayListConverter.class,
-HealthDataAtomicArrayListConverter.class})
+        HealthDataAtomicArrayListConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
+
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
     private static final Object LOCK = new Object();
     private static final String DATABASE_NAME = "healthdata";
@@ -42,10 +42,15 @@ public abstract class AppDatabase extends RoomDatabase {
         Log.d(LOG_TAG, "Getting the database instance");
         return sInstance;
     }
-    public abstract CompositeComponentJoinDao  compositeComponentDao();
+
+    public abstract CompositeComponentJoinDao compositeComponentDao();
+
     public abstract CompositeCompositeJoinDao compositeCompositeJoinDao();
+
     public abstract HealthDataAtomicDao healthDataAtomicDao();
+
     public abstract HealthDataComplexDao healthDataComplexDao();
+
     public abstract HealthDataCompositeDao healthDataCompositeDao();
 
 }

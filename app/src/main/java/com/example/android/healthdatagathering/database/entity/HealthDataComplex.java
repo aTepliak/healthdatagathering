@@ -1,7 +1,6 @@
 package com.example.android.healthdatagathering.database.entity;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -9,32 +8,37 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
-@Entity(indices = {@Index("id")})
+
+@Entity(indices = {@Index(value = {"name", "startTime"},
+        unique = true)})
 public class HealthDataComplex extends HealthDataComponentType {
 
-
-    public long getId() {
-        return id;
-    }
-
-    public ArrayList<HealthDataAtomic> getAtomicValues() {
-        return atomicValues;
-    }
 
     @PrimaryKey(autoGenerate = true)
     private long id;
 
-    ArrayList<HealthDataAtomic> atomicValues;
+    private ArrayList<HealthDataAtomic> atomicValues;
 
-    public HealthDataComplex(String name, Date startTime, Date endTime, long id, ArrayList<HealthDataAtomic> atomicValues) {
+    public HealthDataComplex(String name, Date startTime, Date endTime, ArrayList<HealthDataAtomic> atomicValues) {
         super(name, startTime, endTime);
-        this.id = id;
         this.atomicValues = atomicValues;
     }
-    @Ignore
-    public HealthDataComplex(String name, Date startTime, Date endTime,   ArrayList<HealthDataAtomic> atomicValues) {
-        super(name, startTime, endTime);
+
+
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setAtomicValues(ArrayList<HealthDataAtomic> atomicValues) {
         this.atomicValues = atomicValues;
+    }
+
+    public ArrayList<HealthDataAtomic> getAtomicValues() {
+        return atomicValues;
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.example.android.healthdatagathering.database;
 
 import android.arch.persistence.room.TypeConverter;
 
-import com.example.android.healthdatagathering.database.entity.HealthData;
 import com.example.android.healthdatagathering.database.entity.HealthDataAtomic;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -12,9 +11,10 @@ import java.util.ArrayList;
 
 public class HealthDataAtomicArrayListConverter {
     @TypeConverter
-    public static ArrayList<HealthDataAtomic> fromString(String value) {
-        Type listType = new TypeToken<ArrayList<String>>() {}.getType();
-        return new Gson().fromJson(value, listType);
+    public static ArrayList<HealthDataAtomic> fromString(String json) {
+        Type listType = new TypeToken<ArrayList<HealthDataAtomic>>() {
+        }.getType();
+        return new Gson().fromJson(json, listType);
     }
 
     @TypeConverter

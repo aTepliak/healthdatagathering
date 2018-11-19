@@ -25,13 +25,13 @@
     <string name="msg_req_available">Please make Samsung Health available</string>
 
 
-        <string-array name="brew_array">
-            <item>Steps</item>
-            <item>Blood Glucose</item>
-            <item>Blood Pressure</item>
-            <item>Floors Climbed</item>
-            <item>Heart Rate</item>
-        </string-array>
+    <string-array name="brew_array">
+        <item>Steps</item>
+        <item>Blood Glucose</item>
+        <item>Blood Pressure</item>
+        <item>Floors Climbed</item>
+        <item>Heart Rate</item>
+    </string-array>
 
 
 </resources>

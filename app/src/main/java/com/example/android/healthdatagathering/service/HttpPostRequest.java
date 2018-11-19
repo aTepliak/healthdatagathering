@@ -1,4 +1,4 @@
-package com.example.android.healthdatagathering;
+package com.example.android.healthdatagathering.service;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -23,19 +23,17 @@ public class HttpPostRequest extends AsyncTask<String, Void, String> {
             wr.writeBytes(strings[1]);
             wr.flush();
             wr.close();
-            Log.i("HTTP POST", strings[0] +"; " + strings[1]);
-
+            Log.i("HTTP POST", strings[0] + "; " + strings[1]);
             Log.i("STATUS", String.valueOf(httpURLConnection.getResponseCode()));
-            Log.i("MSG" , httpURLConnection.getResponseMessage());
+            Log.i("MSG", httpURLConnection.getResponseMessage());
             httpURLConnection.disconnect();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-         return "done";
+        return "done";
     }
 
-
-    }
+}
 

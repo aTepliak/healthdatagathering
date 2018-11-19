@@ -6,7 +6,7 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 
 @Entity(tableName = "composite_component_join",
-        primaryKeys = { "compositeId", "componentId" },
+        primaryKeys = {"compositeId", "componentId"},
         foreignKeys = {
                 @ForeignKey(entity = HealthDataComplex.class,
                         parentColumns = "id",
@@ -14,8 +14,12 @@ import android.arch.persistence.room.Index;
                 @ForeignKey(entity = HealthDataComposite.class,
                         parentColumns = "id",
                         childColumns = "compositeId")
-        },indices = {@Index("componentId")} )
+        }, indices = {@Index("componentId")})
 public class CompositeComponentJoin {
+
+    public long compositeId;
+    public long componentId;
+
     public long getCompositeId() {
         return compositeId;
     }
@@ -31,9 +35,6 @@ public class CompositeComponentJoin {
     public void setComponentId(long componentId) {
         this.componentId = componentId;
     }
-
-    public long compositeId;
-    public long componentId;
 
     public CompositeComponentJoin(long compositeId, long componentId) {
         this.compositeId = compositeId;

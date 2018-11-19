@@ -4,5 +4,5 @@
         android:id="@+id/connect"
         android:showAsAction="never"
         android:title="@string/connect_to_shealth"
-        android:textAllCaps="true"/>
+        android:textAllCaps="true" />
 </menu>

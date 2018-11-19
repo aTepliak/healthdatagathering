@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+
 import com.example.android.healthdatagathering.database.entity.HealthDataComposite;
 
 import java.util.List;
@@ -13,21 +14,14 @@ import java.util.List;
 @Dao
 public interface HealthDataCompositeDao {
 
-
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertComponent(HealthDataComposite  composite);
-
-
-
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertComponent(HealthDataComposite composite);
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    void updateComposite (HealthDataComposite composite);
-
+    void updateComposite(HealthDataComposite composite);
 
     @Delete
-    void deleteComposite (HealthDataComposite composite);
-
+    void deleteComposite(HealthDataComposite composite);
 
     @Query("SELECT * FROM healthdatacomposite ORDER BY id")
     List<HealthDataComposite> loadAllComposites();

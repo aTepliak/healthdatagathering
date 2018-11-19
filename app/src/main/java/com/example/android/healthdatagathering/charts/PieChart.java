@@ -12,13 +12,12 @@ import java.util.List;
 public class PieChart {
 
 
-
     Pie pieChart;
     List<DataEntry> data = new ArrayList<>();
 
     public PieChart(HashMap<String, Integer> inputData) {
         this.pieChart = AnyChart.pie();
-        inputData.forEach((k,v)->this.data.add(new ValueDataEntry(k,v)));
+        inputData.forEach((k, v) -> this.data.add(new ValueDataEntry(k, v)));
         pieChart.data(this.data);
 
     }

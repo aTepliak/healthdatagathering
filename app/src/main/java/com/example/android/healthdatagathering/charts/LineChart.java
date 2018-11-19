@@ -1,9 +1,6 @@
 package com.example.android.healthdatagathering.charts;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.anychart.AnyChart;
-import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
@@ -15,7 +12,6 @@ import com.anychart.enums.MarkerType;
 import com.anychart.enums.TooltipPositionMode;
 import com.anychart.graphics.vector.Stroke;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +19,7 @@ import java.util.List;
 public class LineChart {
     Cartesian cartesian = AnyChart.line();
 
-    public  LineChart(HashMap<String, Integer[]> inputData, String title, String yAxisTitle, String series1Name, String series2Name, String series3Name){
+    public LineChart(HashMap<String, Integer[]> inputData, String title, String yAxisTitle, String series1Name, String series2Name, String series3Name) {
 
         cartesian.animation(true);
 
@@ -44,7 +40,7 @@ public class LineChart {
 
         List<DataEntry> seriesData = new ArrayList<>();
 
-        inputData.forEach((k,v)-> seriesData.add(new CustomDataEntry(k,v[0],v[1],v[2])));
+        inputData.forEach((k, v) -> seriesData.add(new CustomDataEntry(k, v[0], v[1], v[2])));
 
         Set set = Set.instantiate();
         set.data(seriesData);
@@ -96,7 +92,6 @@ public class LineChart {
     }
 
 
-
     private class CustomDataEntry extends ValueDataEntry {
 
         CustomDataEntry(String x, Number value, Number value2, Number value3) {
@@ -106,7 +101,8 @@ public class LineChart {
         }
 
     }
-        public Cartesian getCartesian() {
+
+    public Cartesian getCartesian() {
         return cartesian;
     }
 }
